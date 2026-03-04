@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PeluCan v6</title>
+<link rel="manifest" href="manifest.json">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#2d6a4f">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#ff1493;--green2:#00bcd4;--green3:#ffb3d9;
+  --mint:#fff0f7;--dark:#1a1a2e;--text:#333;--gray:#6b7280;
+  --accent:#39ff14;--celeste:#00bcd4;--rosa:#ff69b4;
+  --bg:#f4faf6;--white:#fff;--radius:16px;--shadow:0 2px 12px rgba(0,0,0,.08);
+  --accent:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;position:relative}
+button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:'Nunito',sans-serif;outline:none;border:2px solid #e0ede2;border-radius:10px;padding:11px 13px;width:100%;font-size:14px;background:#fff;color:var(--dark);transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--green2)}
+textarea{resize:vertical;min-height:80px}
+label{font-size:12px;font-weight:800;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* ── SPLASH ── */
+#splash{background:linear-gradient(160deg,#1a1a2e 0%,#ff1493 50%,#00bcd4 100%);align-items:center;justify-content:center;text-align:center;padding:40px 24px}
+.splash-logo{font-size:72px;margin-bottom:12px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.splash-title{font-family:'Playfair Display',serif;font-size:36px;color:#fff;font-weight:900;line-height:1.1;margin-bottom:8px}
+.splash-sub{font-size:14px;color:var(--green3);margin-bottom:48px;font-weight:600}
+.splash-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px}
+.btn-primary{background:#fff;color:var(--green);font-size:16px;font-weight:900;padding:16px;border-radius:50px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{background:rgba(255,255,255,.15);color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:50px;border:2px solid rgba(255,255,255,.3)}
+
+/* ── HEADER ── */
+.header{background:var(--green);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.header-back{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-logo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.4);flex-shrink:0}
+.header-logo-placeholder{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.header-info{flex:1;min-width:0}
+.header-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-addr{font-size:11px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── BODY ── */
+.body-scroll{flex:1;overflow-y:auto;padding:16px}
+
+/* ── SECTION CARD ── */
+.section-card{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:12px}
+
+/* ── SERVICES (SETUP) ── */
+.svc-grid{display:flex;flex-wrap:wrap;gap:8px}
+.svc-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.svc-chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.svc-chip .icon{font-size:16px}
+
+/* ── DAYS GRID ── */
+.days-grid{display:flex;flex-wrap:wrap;gap:8px}
+.day-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s}
+.day-chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.day-chip.active-edit{background:var(--green2);border-color:var(--green2);color:#fff}
+.schedule-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0fdf4;font-size:13px}
+.schedule-row:last-child{border:none}
+.schedule-day-name{font-weight:800;color:var(--dark)}
+.schedule-hours{color:var(--green);font-weight:600}
+
+/* ── HOURS GRID ── */
+.hours-row{display:flex;flex-wrap:wrap;gap:8px}
+.hour-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s}
+.hour-chip.on{background:var(--green2);border-color:var(--green2);color:#fff}
+
+/* ── COLOR PICKER ── */
+.color-grid{display:flex;gap:10px;flex-wrap:wrap}
+.color-dot{width:36px;height:36px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .2s,border-color .2s}
+.color-dot.on{border-color:var(--dark);transform:scale(1.15)}
+
+/* ── BTN SAVE ── */
+.btn-save{background:var(--green);color:#fff;font-size:16px;font-weight:900;padding:16px;border-radius:50px;width:100%;letter-spacing:.5px;transition:background .2s}
+.btn-save:active{background:var(--green2)}
+
+/* ── BOOKING TABS ── */
+.booking-tabs{display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;background:#fff;border-bottom:1px solid #eee;position:sticky;top:68px;z-index:50}
+.b-tab{background:#f5faf6;border:2px solid #e0ede2;border-radius:20px;padding:9px 16px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.b-tab.on{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ── BOOKING STEPS ── */
+.step-indicator{display:flex;align-items:center;justify-content:center;padding:16px 0 8px;gap:0}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;background:#e0ede2;color:var(--gray);flex-shrink:0;transition:all .3s}
+.step-dot.done{background:var(--celeste);color:#fff}
+.step-dot.active{background:var(--green);color:#fff;box-shadow:0 0 0 4px rgba(255,20,147,.2)}
+.step-line{flex:1;height:2px;background:#e0ede2;max-width:32px;transition:background .3s}
+.step-line.done{background:var(--green2)}
+.form-step{display:none;padding:0 16px 16px;animation:fadeIn .3s}
+.form-step.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);font-weight:700;margin-bottom:16px}
+
+/* ── SVC LIST ── */
+.svc-list{display:flex;flex-direction:column;gap:10px}
+.svc-item{background:#fff;border:2px solid #e0ede2;border-radius:12px;padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}
+.svc-item.on{border-color:var(--green);background:var(--mint)}
+.svc-item-name{font-weight:700;font-size:14px;color:var(--dark)}
+.svc-check{width:22px;height:22px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;flex-shrink:0}
+.svc-item.on .svc-check{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ── AVAIL GRID ── */
+.avail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.avail-slot{background:#fff;border:2px solid #e0ede2;border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s}
+.avail-slot.on{background:var(--mint);border-color:var(--green)}
+.avail-slot .day{font-size:11px;font-weight:800;color:var(--gray);text-transform:uppercase}
+.avail-slot .time{font-size:14px;font-weight:900;color:var(--dark);margin-top:2px}
+.avail-slot.on .day,.avail-slot.on .time{color:var(--green)}
+.avail-slot.blocked{opacity:.35;pointer-events:none;background:#f5f5f5}
+.avail-slot.blocked .time{color:#ccc;font-size:11px}
+.day-sel-btn{background:#fff;border:2px solid #e0ede2;border-radius:20px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s}
+.day-sel-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+
+/* ── STEP BTNS ── */
+.step-btns{display:flex;gap:10px;padding:0 16px 20px}
+.btn-next{background:var(--green);color:#fff;font-size:15px;font-weight:900;padding:14px;border-radius:50px;flex:1}
+.btn-back-step{background:#f5faf6;color:var(--gray);font-size:15px;font-weight:700;padding:14px;border-radius:50px;flex:1;border:2px solid #e0ede2}
+
+/* ── PANEL ── */
+.panel-tabs{display:flex;background:#fff;border-bottom:2px solid var(--mint);position:sticky;top:68px;z-index:50}
+.p-tab{flex:1;padding:14px 8px;text-align:center;font-size:13px;font-weight:800;color:var(--gray);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+.p-tab.on{color:var(--green);border-color:var(--green)}
+.req-card{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--green3)}
+.req-card.confirmed{border-color:var(--green2)}
+.req-card.rejected{border-color:#fca5a5;opacity:.7}
+.req-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--dark)}
+.req-meta{font-size:12px;color:var(--gray);margin-top:4px;line-height:1.6}
+.req-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-top:8px}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-confirmed{background:#d1fae5;color:#065f46}
+.badge-rejected{background:#fee2e2;color:#991b1b}
+.req-actions{display:flex;gap:8px;margin-top:12px}
+.btn-confirm{background:var(--green);color:#fff;font-size:13px;font-weight:800;padding:10px 16px;border-radius:50px;flex:1}
+.btn-reject{background:#fee2e2;color:#dc2626;font-size:13px;font-weight:800;padding:10px 16px;border-radius:50px}
+.btn-wa{background:#25D366;color:#fff;font-size:13px;font-weight:800;padding:10px 14px;border-radius:50px}
+
+/* ── SHARE MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:430px;margin:0 auto}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);margin-bottom:16px;text-align:center}
+.link-box{background:var(--mint);border-radius:12px;padding:14px;font-size:13px;color:var(--green);font-weight:700;word-break:break-all;margin-bottom:12px;text-align:center}
+.btn-copy{background:var(--green);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:50px;width:100%;margin-bottom:10px}
+.btn-share-wa{background:#25D366;color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:50px;width:100%;margin-bottom:10px}
+.btn-modal-close{background:#f5faf6;color:var(--gray);font-size:15px;font-weight:700;padding:12px;border-radius:50px;width:100%}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{background:#fff;border-top:1px solid #e0ede2;display:flex;position:sticky;bottom:0;z-index:100}
+.nav-btn{flex:1;padding:12px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:800;color:var(--gray);cursor:pointer;background:none;border:none;transition:color .2s}
+.nav-btn.on{color:var(--green)}
+.nav-icon{font-size:22px}
+
+/* ── SUCCESS ── */
+#success{background:linear-gradient(160deg,#1a1a2e,#ff1493);align-items:center;justify-content:center;text-align:center;padding:40px 24px}
+.success-icon{font-size:80px;margin-bottom:20px;animation:pop .5s cubic-bezier(.17,.67,.38,1.5)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:10px}
+.success-sub{font-size:14px;color:var(--green3);line-height:1.6;margin-bottom:30px}
+.btn-new{background:#fff;color:var(--green);font-size:15px;font-weight:900;padding:15px 32px;border-radius:50px}
+
+/* ── TRIAL ── */
+.trial-bar{background:linear-gradient(90deg,var(--accent),#f97316);color:#fff;text-align:center;padding:10px;font-size:13px;font-weight:700}
+
+/* ── CURSOS & ABONOS ── */
+.curso-card{background:#fff;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow)}
+.curso-header{padding:18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff}
+.curso-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--dark);font-weight:700}
+.curso-subtitle{font-size:12px;color:var(--gray);margin-top:2px}
+.curso-arrow{font-size:18px;color:var(--green);transition:transform .3s;flex-shrink:0}
+.curso-arrow.open{transform:rotate(180deg)}
+.curso-body{padding:0;max-height:0;overflow:hidden;transition:max-height .45s ease}
+.curso-body.open{max-height:3000px}
+.curso-inner{padding:0 18px 18px}
+.curso-precio{background:var(--mint);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.curso-precio-title{font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.precio-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(45,106,79,.1);font-size:13px}
+.precio-row:last-child{border:none}
+.precio-label{color:var(--gray);font-weight:600}
+.precio-val{color:var(--dark);font-weight:800}
+.curso-lista-item{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:13px;color:var(--text);border-bottom:1px solid #f5f5f5}
+.curso-lista-item:last-child{border:none}
+.curso-lista-item .dot{color:var(--green);font-weight:800;flex-shrink:0}
+.curso-info-box{background:#f9fefb;border:1px solid #d0ebd6;border-radius:10px;padding:12px;margin-bottom:12px;font-size:13px;color:var(--text);line-height:1.7}
+.btn-consultar{background:linear-gradient(135deg,#25D366,#128C7E);color:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;padding:13px;border:none;border-radius:50px;cursor:pointer;width:100%;letter-spacing:.5px}
+.incluye-box{background:linear-gradient(135deg,var(--mint),#f0faf2);border:2px solid var(--green3);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.incluye-title{font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.incluye-items{display:flex;flex-wrap:wrap;gap:6px}
+.incluye-chip{background:#fff;border:1px solid var(--green3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--green)}
+.aviso-box{background:#fff3cd;border:1px solid #fbbf24;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.6}
+.abono-card{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--green)}
+.abono-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--dark);margin-bottom:4px}
+.abono-desc{font-size:13px;color:var(--gray);margin-bottom:12px}
+.abono-precio{font-size:24px;font-weight:900;color:var(--green);margin-bottom:4px}
+.abono-desde{font-size:12px;color:var(--gray);font-weight:600;display:block;margin-bottom:12px}
+
+/* ── AGENDA ── */
+.agenda-day{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.agenda-day-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--dark);margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--mint)}
+.agenda-item{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5}
+.agenda-item:last-child{border:none}
+.agenda-time{background:var(--green);color:#fff;border-radius:8px;padding:4px 8px;font-size:12px;font-weight:900;flex-shrink:0;min-width:48px;text-align:center}
+.agenda-info{flex:1}
+.agenda-dog{font-size:14px;font-weight:800;color:var(--dark)}
+.agenda-owner{font-size:12px;color:var(--gray)}
+.agenda-svc{font-size:12px;color:var(--green);font-weight:700}
+.agenda-empty{text-align:center;padding:40px 20px;color:var(--gray);font-size:14px}
+
+/* ── STATS ── */
+.stat-card{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:12px;box-shadow:var(--shadow)}
+.stat-num{font-size:40px;font-weight:900;color:var(--green);line-height:1}
+.stat-label{font-size:13px;color:var(--gray);margin-top:4px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── LOGO PREVIEW ── */
+.logo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--green3);display:none;margin-bottom:8px}
+.logo-upload-btn{background:var(--mint);border:2px dashed var(--green3);border-radius:12px;padding:16px;text-align:center;cursor:pointer;width:100%;font-size:13px;font-weight:700;color:var(--green)}
+</style>
+</head>
+<body>
+
+<!-- ===== SPLASH ===== -->
+<div class="screen active" id="splash">
+  <div class="splash-logo">🐾</div>
+  <h1 class="splash-title">PeluCan</h1>
+  <p class="splash-sub">Turnos para peluquerías caninas</p>
+  <div class="splash-btns">
+    <button class="btn-primary" onclick="goSetup()">🐶 Soy peluquero/a</button>
+    <button class="btn-secondary" onclick="goPanel()">Ya tengo cuenta</button>
+  </div>
+</div>
+
+<!-- ===== SETUP ===== -->
+<div class="screen" id="setupScreen">
+  <div class="header">
+    <button class="header-back" onclick="showScreen('splash')">←</button>
+    <div class="header-info"><div class="header-name">Configurar mi peluquería</div><div class="header-addr">v3</div></div>
+  </div>
+  <div class="body-scroll" id="setupBody">
+
+    <div class="section-card">
+      <div class="section-title">📷 Logo</div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <img id="logoPreview" class="logo-preview" src="">
+        <label for="logoInput" class="logo-upload-btn">
+          📁 Subir logo (opcional)<br><span style="font-size:11px;font-weight:600;color:var(--gray)">JPG, PNG · Máx 2MB</span>
+        </label>
+        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(this)">
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">🏪 Tu peluquería</div>
+      <div class="field"><label>Nombre</label><input id="sName" type="text" placeholder="Coketos Peluquería Canina"></div>
+      <div class="field"><label>Slogan (opcional)</label><input id="sSlogan" type="text" placeholder="El mejor look para tu perrito 🐶"></div>
+      <div class="field"><label>WhatsApp (con código de área)</label><input id="sWa" type="tel" placeholder="3416123456"></div>
+      <div class="field"><label>Dirección</label><input id="sAddr" type="text" placeholder="Río Negro 336, Villa Cassini"></div>
+    </div>
+
+    
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">✂️ Servicios que ofrecés</div>
+      <div class="svc-grid" id="svcGrid">
+        <div class="svc-chip on" data-svc="Baño + corte"><span class="icon">✂️</span>Baño + corte</div>
+        <div class="svc-chip on" data-svc="Baño"><span class="icon">🛁</span>Baño</div>
+        <div class="svc-chip on" data-svc="Tratamiento de pelo"><span class="icon">✨</span>Tratamiento</div>
+        <div class="svc-chip on" data-svc="Spa canino"><span class="icon">🌿</span>Spa canino</div>
+        <div class="svc-chip on" data-svc="Pelado al ras"><span class="icon">🔪</span>Pelado al ras</div>
+        <div class="svc-chip" data-svc="Teñido"><span class="icon">🎨</span>Teñido</div>
+        <div class="svc-chip" data-svc="Perfume y moño"><span class="icon">🎀</span>Perfume y moño</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">📅 Días y horarios</div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:14px">Tocá un día para activarlo y elegir sus horarios.</p>
+      <div class="days-grid" id="daysGrid">
+        <div class="day-chip" data-d="Lunes" onclick="toggleSetupDay(this)">Lun</div>
+        <div class="day-chip" data-d="Martes" onclick="toggleSetupDay(this)">Mar</div>
+        <div class="day-chip" data-d="Miércoles" onclick="toggleSetupDay(this)">Mié</div>
+        <div class="day-chip" data-d="Jueves" onclick="toggleSetupDay(this)">Jue</div>
+        <div class="day-chip" data-d="Viernes" onclick="toggleSetupDay(this)">Vie</div>
+        <div class="day-chip" data-d="Sábado" onclick="toggleSetupDay(this)">Sáb</div>
+
+      </div>
+      <div id="setupHoursPanel" style="display:none;margin-top:16px">
+        <div id="setupHoursDayLabel" style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"></div>
+        <div class="hours-row" id="setupHoursRow"></div>
+      </div>
+      <div id="setupScheduleSummary" style="margin-top:14px"></div>
+    </div>
+
+    <div style="padding:0 0 24px">
+      <div style="padding:0 0 12px"><button onclick="goEditContent()" style="background:#fff;border:2px solid var(--green);color:var(--green);font-family:Nunito,sans-serif;font-size:15px;font-weight:800;padding:14px;border-radius:50px;width:100%;cursor:pointer">Editar cursos y abonos</button></div>
+      <button class="btn-save" onclick="saveSetup()">✅ Guardar y generar mi link</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== EDITOR ===== -->
+<div class="screen" id="editorScreen">
+  <div class="header">
+    <button class="header-back" onclick="showScreen('setupScreen')">&#8592;</button>
+    <div class="header-info"><div class="header-name">Editar cursos y abonos</div></div>
+  </div>
+  <div class="body-scroll">
+    <div class="section-card">
+      <div class="section-title">Curso Nivel Inicial</div>
+      <div class="field"><label>Duracion</label><input id="ec1_dur" type="text"></div>
+      <div class="field"><label>Descripcion</label><textarea id="ec1_desc"></textarea></div>
+      <div class="field"><label>Precio contado</label><input id="ec1_p1" type="text"></div>
+      <div class="field"><label>En 2 veces</label><input id="ec1_p2" type="text"></div>
+      <div class="field"><label>Por clase</label><input id="ec1_p3" type="text"></div>
+      <div class="field"><label>Tarjeta 12 cuotas</label><input id="ec1_p4" type="text"></div>
+      <div class="field"><label>Sena</label><input id="ec1_p5" type="text"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">Cursos de Perfeccionamiento</div>
+      <div class="field"><label>Duracion</label><input id="ec2_dur" type="text"></div>
+      <div class="field"><label>Descripcion</label><textarea id="ec2_desc"></textarea></div>
+      <div class="field"><label>Tipos (uno por linea)</label><textarea id="ec2_tipos"></textarea></div>
+      <div class="field"><label>Precio contado</label><input id="ec2_p1" type="text"></div>
+      <div class="field"><label>Precio tarjeta</label><input id="ec2_p2" type="text"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">Curso a Distancia</div>
+      <div class="field"><label>Descripcion</label><textarea id="ec3_desc"></textarea></div>
+      <div class="field"><label>Precio</label><input id="ec3_p1" type="text"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">Abono Quincenal</div>
+      <div class="field"><label>Que incluye</label><input id="ea1_desc" type="text"></div>
+      <div class="field"><label>Precio</label><input id="ea1_precio" type="text"></div>
+      <div class="field"><label>Aclaracion</label><textarea id="ea1_nota"></textarea></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">Abono Mensual</div>
+      <div class="field"><label>Que incluye</label><input id="ea2_desc" type="text"></div>
+      <div class="field"><label>Precio</label><input id="ea2_precio" type="text"></div>
+      <div class="field"><label>Aclaracion</label><textarea id="ea2_nota"></textarea></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">Datos de pago</div>
+      <div class="field"><label>Alias / CBU</label><input id="ep_alias" type="text"></div>
+      <div class="field"><label>Titular</label><input id="ep_titular" type="text"></div>
+    </div>
+    <div style="padding:0 0 24px">
+      <button class="btn-save" onclick="saveContent()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOOKING ===== -->
+<div class="screen" id="bookingScreen">
+  <div class="header" id="bookingHeader">
+    <div id="bookingLogoWrap" class="header-logo-placeholder">🐾</div>
+    <div class="header-info">
+      <div class="header-name" id="bookingName">PeluCan</div>
+      <div class="header-addr" id="bookingAddr"></div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="booking-tabs">
+    <button class="b-tab on" id="tabTurnos" onclick="showBookingTab('turnos')">🐾 Turno</button>
+    <button class="b-tab" id="tabCursos" onclick="showBookingTab('cursos')">📚 Cursos</button>
+    <button class="b-tab" id="tabAbonos" onclick="showBookingTab('abonos')">🔄 Abonos</button>
+  </div>
+
+  <!-- TAB: TURNO -->
+  <div id="tabTurnos-content">
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="sd1">1</div>
+      <div class="step-line" id="sl1"></div>
+      <div class="step-dot" id="sd2">2</div>
+      <div class="step-line" id="sl2"></div>
+      <div class="step-dot" id="sd3">3</div>
+      <div class="step-line" id="sl3"></div>
+      <div class="step-dot" id="sd4">4</div>
+    </div>
+
+    <!-- Step 1: Dueño -->
+    <div class="form-step active" id="step1">
+      <div style="padding:0 16px 12px">
+        <div class="step-title">👤 Tus datos</div>
+        <div class="aviso-box" style="margin-bottom:14px">⏰ <strong>Tiempo de espera:</strong> 15 minutos, luego el turno queda cancelado.<br>🐛 Los perros no deben tener pulgas, garrapatas, lastimaduras no sanadas ni enfermedades contagiosas.<br>⚠️ Avisar si el perro no está acostumbrado a la peluquería.</div>
+        <div class="field"><label>Tu nombre</label><input id="bOwnerName" type="text" placeholder="María García"></div>
+        <div class="field"><label>WhatsApp</label><input id="bOwnerPhone" type="tel" placeholder="+5493416123456"></div>
+        <div class="field"><label>Email (opcional)</label><input id="bOwnerEmail" type="email" placeholder="maria@mail.com"></div>
+      </div>
+    </div>
+
+    <!-- Step 2: Perro -->
+    <div class="form-step" id="step2">
+      <div style="padding:0 16px 12px">
+        <div class="step-title">🐕 Tu perro</div>
+        <div class="field"><label>Nombre del perro</label><input id="bDogName" type="text" placeholder="Firulais"></div>
+        <div class="field"><label>Raza</label><input id="bDogBreed" type="text" placeholder="Labrador, mestizo, etc."></div>
+        <div class="field"><label>Tamaño</label>
+          <select id="bDogSize">
+            <option value="">Seleccioná...</option>
+            <option>Pequeño (hasta 10kg)</option>
+            <option>Mediano (10-25kg)</option>
+            <option>Grande (más de 25kg)</option>
+          </select>
+        </div>
+        <div class="field"><label>Edad</label><input id="bDogAge" type="text" placeholder="2 años"></div>
+        <div class="field"><label>Observaciones (comportamiento, alergias, etc.)</label><textarea id="bDogNotes" placeholder="Es nervioso, le molesta que le toquen las patas..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- Step 3: Servicio -->
+    <div class="form-step" id="step3">
+      <div style="padding:0 16px 12px">
+        <div class="step-title">✂️ ¿Qué servicio necesitás?</div>
+        <div class="incluye-box">
+          <div class="incluye-title">✅ Todos los servicios incluyen</div>
+          <div class="incluye-items">
+            <span class="incluye-chip">✂️ Pelado higiénico</span>
+            <span class="incluye-chip">💅 Corte de uñas si lo necesita</span>
+            <span class="incluye-chip">👂 Limpieza de oídos</span>
+            <span class="incluye-chip">🐾 Despeje de almohadillas</span>
+          </div>
+        </div>
+        <div class="svc-list" id="svcList"></div>
+      </div>
+    </div>
+
+    <!-- Step 4: Disponibilidad -->
+    <div class="form-step" id="step4">
+      <div style="padding:0 16px 12px">
+        <div class="step-title">&#128197; Cuando podes?</div>
+        <p style="font-size:13px;color:var(--gray);margin-bottom:14px">Elegi un dia disponible y luego el horario.</p>
+        <div id="bookingCalWrap" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:14px"></div>
+        <div id="daySelector" style="display:none"></div>
+        <div id="hoursForDay" style="display:none">
+          <div id="selectedDayLabel" style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"></div>
+          <div id="availGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px"></div>
+        </div>
+        <div id="slotsSummary" style="display:none;background:var(--mint);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Horario seleccionado</div>
+          <div id="slotsList" style="font-size:13px;color:var(--dark);font-weight:700;line-height:1.8"></div>
+        </div>
+        <div class="field" style="margin-top:4px"><label>Nota adicional (opcional)</label><textarea id="bExtraNotes" placeholder="Cualquier cosa que quieras aclarar..."></textarea></div>
+      </div>
+    </div>
+    <!-- Step buttons -->
+    <div class="step-btns" id="stepBtns">
+      <button class="btn-back-step" id="btnBack" onclick="prevStep()" style="display:none">← Volver</button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">Continuar →</button>
+    </div>
+  </div><!-- end tabTurnos-content -->
+
+  <!-- TAB: CURSOS -->
+  <div id="tabCursos-content" style="display:none;padding:16px">
+
+
+    <!-- Curso Inicial -->
+    <div class="curso-card">
+      <div class="curso-header" onclick="toggleCurso(this)">
+        <div>
+          <div class="curso-title">🎓 Curso Nivel Inicial</div>
+          <div class="curso-subtitle" id="dyn_c1_dur">2 meses · 8 clases · 100% práctico</div>
+        </div>
+        <div class="curso-arrow">▼</div>
+      </div>
+      <div class="curso-body">
+        <div class="curso-inner">
+          <div class="curso-info-box">Curso único en la zona — aprendés en una peluquería canina real, con perros reales. <strong>No hace falta que traigas mascotas</strong>. El material teórico y las herramientas corren por cuenta de la escuela. Cupo limitado a <strong>5 personas</strong> para atención personalizada. Al finalizar se toma examen teórico y se entrega <strong>certificado de asistencia</strong>.<br><br>📍 Río Negro 336, Villa Cassini, Capitán Bermúdez.<br>👩‍🏫 Instructora: <strong>Nanci Alba</strong> — Estilista Canina</div>
+          <div style="font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Programa</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Qué es un peluquero canino. Función personal, profesional y social</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Diseño de una peluquería canina. Instalaciones y equipamientos</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Morfología externa del perro. Anatomía y fisiología de la piel</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Comportamiento canino. Técnicas de sujeción</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Estándar y razas caninas</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Cosmología canina: baño, secado, desenredado</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Corte con máquinas y tijeras</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Grooming · Stripping · Trimming</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>Higiene: dientes, orejas, ojos, glándulas paranales</div>
+          <div class="curso-lista-item" style="border:none"><span class="dot">▸</span>Peluquería según raza y perros mestizos</div>
+          <div class="curso-precio" style="margin-top:12px">
+            <div class="curso-precio-title">💰 Formas de pago</div>
+            <div class="precio-row"><span class="precio-label">Contado / Transferencia</span><span class="precio-val">$450.000</span></div>
+            <div class="precio-row"><span class="precio-label">En 2 veces</span><span class="precio-val">$500.000</span></div>
+            <div class="precio-row"><span class="precio-label">Por clase · 7 clases (la 8ª no se abona)</span><span class="precio-val">$78.000 c/u</span></div>
+            <div class="precio-row"><span class="precio-label">Por clase con tarjeta de crédito</span><span class="precio-val">$89.000 c/u</span></div>
+            <div class="precio-row"><span class="precio-label">Tarjeta hasta 12 cuotas</span><span class="precio-val">$540.000</span></div>
+            <div class="precio-row"><span class="precio-label">Seña para reservar lugar</span><span class="precio-val">$50.000</span></div>
+          </div>
+          <div class="aviso-box">❌ No se aceptan cheques · ❌ Sin devolución una vez abonado · 📅 No hay fecha fija — ingresás a medida que hay lugar</div>
+          <button class="btn-consultar" onclick="consultarCurso('Curso Nivel Inicial')">📱 Consultar por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perfeccionamiento -->
+    <div class="curso-card">
+      <div class="curso-header" onclick="toggleCurso(this)">
+        <div>
+          <div class="curso-title">✂️ Cursos de Perfeccionamiento</div>
+          <div class="curso-subtitle" id="dyn_c2_dur">1 jornada · A coordinar</div>
+        </div>
+        <div class="curso-arrow">▼</div>
+      </div>
+      <div class="curso-body">
+        <div class="curso-inner">
+          <div class="curso-info-box">Perfeccioná tu técnica en una jornada. Horario: 9 a 11hs o 14 a 16hs, días a coordinar. Debés traer tus tijeras, peine y cardinas — el resto lo usamos de la escuela.</div>
+          <div style="font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Cursos disponibles</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>🐶 Manto duro y lacio</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>🐶 Cortes comerciales</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>🐶 Tattoo y teñidos</div>
+          <div class="curso-lista-item"><span class="dot">▸</span>🐶 Manto duro</div>
+          <div class="curso-lista-item" style="border:none"><span class="dot">▸</span>✨ Personalizados: caritas, mix de máquina y tijera, cortes a tijera, y más</div>
+          <div class="curso-precio" style="margin-top:12px">
+            <div class="curso-precio-title">💰 Precio</div>
+            <div class="precio-row"><span class="precio-label">Contado / Transferencia</span><span class="precio-val">$100.000</span></div>
+            <div class="precio-row"><span class="precio-label">Tarjeta de crédito</span><span class="precio-val">$140.000</span></div>
+          </div>
+          <button class="btn-consultar" onclick="consultarCurso('Curso de Perfeccionamiento')">📱 Consultar por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- A distancia -->
+    <div class="curso-card">
+      <div class="curso-header" onclick="toggleCurso(this)">
+        <div>
+          <div class="curso-title">🎬 Curso a Distancia</div>
+          <div class="curso-subtitle">7 videos · Desde donde estés</div>
+        </div>
+        <div class="curso-arrow">▼</div>
+      </div>
+      <div class="curso-body">
+        <div class="curso-inner">
+          <div class="curso-info-box">7 videos grabados dentro de la peluquería canina, con material teórico y la práctica real del día a día. Aprendé a tu ritmo desde cualquier lugar.</div>
+          <div class="curso-precio">
+            <div class="curso-precio-title">💰 Precio</div>
+            <div class="precio-row"><span class="precio-label">Transferencia</span><span class="precio-val">$200.000</span></div>
+          </div>
+          <button class="btn-consultar" onclick="consultarCurso('Curso a Distancia')">📱 Consultar por WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end tabCursos-content -->
+
+  <!-- TAB: ABONOS -->
+  <div id="tabAbonos-content" style="display:none;padding:16px">
+
+    <div class="incluye-box">
+      <div class="incluye-title">✅ Todos los servicios incluyen</div>
+      <div class="incluye-items">
+        <span class="incluye-chip">✂️ Pelado higiénico</span>
+        <span class="incluye-chip">💅 Corte de uñas si lo necesita</span>
+        <span class="incluye-chip">👂 Limpieza de oídos</span>
+        <span class="incluye-chip">🐾 Despeje de almohadillas</span>
+      </div>
+    </div>
+
+    <div class="abono-card">
+      <div class="abono-title">🔄 Abono Quincenal</div>
+      <div class="abono-desc" id="dyn_a1_desc">2 baños + 1 corte</div>
+      <div class="abono-precio" id="dyn_a1_precio">Desde $38.000</div>
+      <span class="abono-desde">Los importes son estimativos según el tipo de perro, manto y comportamiento. Se abonan completos antes de comenzar.</span>
+      <button class="btn-consultar" onclick="consultarCurso('Abono Quincenal')">📱 Consultar por WhatsApp</button>
+    </div>
+
+    <div class="abono-card">
+      <div class="abono-title">📅 Abono Mensual</div>
+      <div class="abono-desc" id="dyn_a2_desc">4 baños + 1 corte</div>
+      <div class="abono-precio" id="dyn_a2_precio">Desde $69.000</div>
+      <span class="abono-desde">Los importes son estimativos según el tipo de perro, manto y comportamiento. Se abonan completos antes de comenzar.</span>
+      <button class="btn-consultar" onclick="consultarCurso('Abono Mensual')">📱 Consultar por WhatsApp</button>
+    </div>
+
+    <div class="section-card" style="text-align:center">
+      <div style="font-size:13px;color:var(--gray);margin-bottom:6px">💳 Formas de pago</div>
+      <div style="font-size:15px;font-weight:800;color:var(--dark)">Efectivo o transferencia</div>
+      <div style="font-size:13px;color:var(--green);margin-top:4px;font-weight:700">coketospelu.mp · Titular: Nanci Gabriela Alba</div>
+    </div>
+
+  </div><!-- end tabAbonos-content -->
+
+</div><!-- end bookingScreen -->
+
+<!-- ===== SUCCESS ===== -->
+<div class="screen" id="success">
+  <div class="success-icon">🎉</div>
+  <h2 class="success-title">¡Solicitud enviada!</h2>
+  <p class="success-sub" style="margin-bottom:20px">Tu solicitud fue registrada.<br>Ahora avisale al peluquero por WhatsApp 👇</p>
+  <a id="waSuccessBtn" href="#" target="_blank" style="display:block;background:#25D366;color:#fff;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;padding:18px 36px;border-radius:50px;text-decoration:none;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">📱 Notificar al peluquero</a>
+  <button class="btn-new" onclick="resetBooking()">Hacer otra solicitud</button>
+</div>
+
+<!-- ===== PANEL ===== -->
+<div class="screen" id="panelScreen">
+  <div class="header" id="panelHeader">
+    <div id="panelLogoWrap" class="header-logo-placeholder">🐾</div>
+    <div class="header-info">
+      <div class="header-name" id="panelName">Mi panel</div>
+      <div class="header-addr" id="panelAddr"></div>
+    </div>
+  </div>
+
+
+  <div class="panel-tabs">
+    <div class="p-tab on" id="pt1" onclick="switchPTab('pending')">📋 Solicitudes</div>
+    <div class="p-tab" id="pt2" onclick="switchPTab('confirmed')">✅ Confirmados</div>
+    <div class="p-tab" id="pt3" onclick="switchPTab('agenda')">📅 Agenda</div>
+    <div class="p-tab" id="pt4" onclick="switchPTab('stats')">📊 Stats</div>
+  </div>
+
+  <div class="body-scroll" id="panelBody">
+    <div id="pendingList"></div>
+
+    <div id="confirmedList" style="display:none"></div>
+    <div id="agendaView" style="display:none"></div>
+    <div id="statsView" style="display:none"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn on" onclick="switchPTab('pending')"><span class="nav-icon">📋</span>Solicitudes</button>
+    <button class="nav-btn" onclick="openShare()"><span class="nav-icon">🔗</span>Mi link</button>
+    <button class="nav-btn" onclick="showScreen('setupScreen');loadSetupForm()"><span class="nav-icon">⚙️</span>Ajustes</button>
+  </div>
+</div>
+
+<!-- ===== SHARE MODAL ===== -->
+<div class="modal-overlay" id="shareModal" onclick="if(event.target===this)closeShare()">
+  <div class="modal-box">
+    <div class="modal-title">🔗 Tu link para compartir</div>
+    <div class="link-box" id="shareLink"></div>
+    <button class="btn-copy" onclick="copyLink()">📋 Copiar link</button>
+    <button class="btn-share-wa" onclick="shareWa()">📱 Compartir por WhatsApp</button>
+    <button class="btn-modal-close" onclick="closeShare()">Cerrar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────
+let salon = {
+  id:'', name:'', slogan:'', wa:'', addr:'', logo:'',
+  color:'#2d6a4f', services:[], days:[], hours:[], schedule:{},
+  trialStart: null, paid: false
+};
+let requests = [];
+let currentStep = 1;
+let selectedColor = '#2d6a4f';
+let currentPTab = 'pending';
+
+// ── INIT ──────────────────────────────────────────────────
+window.onload = function(){
+  loadSalon();
+  loadRequests();
+  const p = new URLSearchParams(location.search);
+  if (p.get('salon')) {
+    loadSalonById(p.get('salon'));
+    showScreen('bookingScreen');
+  }
+};
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  applyColor(salon.color||'#2d6a4f');
+}
+
+// ── STORAGE ───────────────────────────────────────────────
+function saveSalon(){ try{localStorage.setItem('pelucan_salon',JSON.stringify(salon));}catch(e){} }
+function loadSalon(){ try{const d=localStorage.getItem('pelucan_salon');if(d)salon=JSON.parse(d);}catch(e){} }
+function saveRequests(){ try{localStorage.setItem('pelucan_requests',JSON.stringify(requests));}catch(e){} }
+function loadRequests(){ try{const d=localStorage.getItem('pelucan_requests');if(d)requests=JSON.parse(d);}catch(e){} }
+
+function loadSalonById(id){
+  // First try localStorage (same device)
+  try{
+    const d = localStorage.getItem('pelucan_salon');
+    if(d){
+      const s = JSON.parse(d);
+      if(s.id===id){ salon=s; applyBookingHeader(); return; }
+    }
+  }catch(e){}
+  // Fallback: read all params from URL
+  const p = new URLSearchParams(location.search);
+  salon.id   = id;
+  salon.wa   = p.get('wa')||'';
+  salon.name = decodeURIComponent(p.get('name')||'PeluCan');
+  // Load schedule and services from URL if present
+  try{
+    if(p.get('sched')) salon.schedule = JSON.parse(decodeURIComponent(p.get('sched')));
+    if(p.get('svcs'))  salon.services  = JSON.parse(decodeURIComponent(p.get('svcs')));
+  }catch(e){}
+  applyBookingHeader();
+}
+
+// ── SETUP ─────────────────────────────────────────────────
+// ── SETUP SCHEDULE ───────────────────────────────────────
+let setupSchedule = {};
+let currentEditDay = null;
+
+const ALL_HOURS = ['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+const SAT_HOURS = ['9:00','10:00','11:00','12:00'];
+
+function toggleSetupDay(el){
+  const day = el.dataset.d;
+  if(currentEditDay === day){
+    // clicking same day closes it
+    currentEditDay = null;
+    el.classList.remove('active-edit');
+    document.getElementById('setupHoursPanel').style.display='none';
+    return;
+  }
+  // deactivate previous edit highlight
+  document.querySelectorAll('#daysGrid .day-chip').forEach(c=>c.classList.remove('active-edit'));
+  currentEditDay = day;
+  el.classList.add('active-edit');
+  // init hours for this day if not set
+  if(!setupSchedule[day]){
+    const isSat = day==='Sábado';
+    setupSchedule[day] = isSat ? [...SAT_HOURS] : [...ALL_HOURS];
+  }
+  el.classList.add('on');
+  renderSetupHours(day);
+  document.getElementById('setupHoursPanel').style.display='block';
+}
+
+function renderSetupHours(day){
+  const isSat = day==='Sábado';
+  const available = isSat ? SAT_HOURS : ALL_HOURS;
+  const selected = setupSchedule[day] || [];
+  document.getElementById('setupHoursDayLabel').textContent = '⏰ Horarios para ' + day;
+  document.getElementById('setupHoursRow').innerHTML = available.map(h=>`
+    <div class="hour-chip ${selected.includes(h)?'on':''}" data-h="${h}" onclick="toggleSetupHour(this,'${day}','${h}')">${h}</div>
+  `).join('');
+}
+
+function toggleSetupHour(el, day, hour){
+  el.classList.toggle('on');
+  if(!setupSchedule[day]) setupSchedule[day]=[];
+  if(el.classList.contains('on')){
+    if(!setupSchedule[day].includes(hour)) setupSchedule[day].push(hour);
+  } else {
+    setupSchedule[day] = setupSchedule[day].filter(h=>h!==hour);
+    if(setupSchedule[day].length===0){
+      delete setupSchedule[day];
+      document.querySelectorAll('#daysGrid .day-chip').forEach(c=>{
+        if(c.dataset.d===day){ c.classList.remove('on','active-edit'); }
+      });
+      document.getElementById('setupHoursPanel').style.display='none';
+      currentEditDay=null;
+    }
+  }
+  renderScheduleSummary();
+}
+
+function renderScheduleSummary(){
+  var sum=document.getElementById('setupScheduleSummary');
+  if(sum) sum.innerHTML='';
+}
+
+function goSetup(){
+  loadSetupForm();
+  showScreen('setupScreen');
+}
+
+function loadSetupForm(){
+  document.getElementById('sName').value = salon.name||'';
+  document.getElementById('sSlogan').value = salon.slogan||'';
+  document.getElementById('sWa').value = salon.wa||'';
+  document.getElementById('sAddr').value = salon.addr||'';
+  if(salon.logo){ const p=document.getElementById('logoPreview'); p.src=salon.logo; p.style.display='block'; }
+  selectedColor = salon.color||'#2d6a4f';
+  document.querySelectorAll('.color-dot').forEach(d=>{
+    d.classList.toggle('on', d.dataset.c===selectedColor);
+  });
+  // services
+  document.querySelectorAll('#svcGrid .svc-chip').forEach(c=>{
+    c.classList.toggle('on', salon.services.length===0 || salon.services.includes(c.dataset.svc));
+    c.onclick=()=>c.classList.toggle('on');
+  });
+  // Restore schedule
+  setupSchedule = salon.schedule ? JSON.parse(JSON.stringify(salon.schedule)) : {};
+  document.querySelectorAll('#daysGrid .day-chip').forEach(c=>{
+    const d = c.dataset.d;
+    c.classList.toggle('on', !!(setupSchedule[d] && setupSchedule[d].length>0));
+  });
+  renderScheduleSummary();
+}
+
+function handleLogo(input){
+  const file = input.files[0]; if(!file) return;
+  const r = new FileReader();
+  r.onload=e=>{
+    const p=document.getElementById('logoPreview');
+    p.src=e.target.result; p.style.display='block';
+    salon.logo=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function pickColor(){}
+
+function saveSetup(){
+  const name = document.getElementById('sName').value.trim();
+  const wa   = document.getElementById('sWa').value.trim();
+  if(!name){ toast('⚠️ Ingresá el nombre de tu peluquería'); return; }
+  if(!wa)  { toast('⚠️ Ingresá tu WhatsApp'); return; }
+
+  if(!salon.id) salon.id = 'salon_' + Math.random().toString(36).substr(2,8);
+  salon.name    = name;
+  salon.slogan  = document.getElementById('sSlogan').value.trim();
+  salon.wa      = wa;
+  salon.addr    = document.getElementById('sAddr').value.trim();
+  salon.color   = selectedColor;
+  salon.services= [...document.querySelectorAll('#svcGrid .svc-chip.on')].map(c=>c.dataset.svc);
+  salon.days    = Object.keys(setupSchedule).filter(d=>setupSchedule[d].length>0);
+  salon.schedule = JSON.parse(JSON.stringify(setupSchedule));
+  salon.hours   = [...new Set(Object.values(setupSchedule).flat())].sort();
+  if(!salon.trialStart) salon.trialStart = Date.now();
+
+  saveSalon();
+  toast('✅ ¡Guardado!');
+  setTimeout(()=>{ goPanel(); }, 800);
+}
+
+// ── PANEL ─────────────────────────────────────────────────
+async function goPanel(){
+  loadSalon(); loadRequests();
+  if(!salon.id){ toast('⚠️ Primero configurá tu peluquería'); goSetup(); return; }
+  applyColor(salon.color||'#2d6a4f');
+  applyPanelHeader();
+  showScreen('panelScreen');
+  renderPanel();
+  // Load fresh data from Supabase
+  await sbLoad(salon.id);
+  renderPanel();
+}
+
+function applyPanelHeader(){
+  document.getElementById('panelName').textContent = salon.name||'Mi panel';
+  document.getElementById('panelAddr').textContent = salon.addr||'';
+  const wrap = document.getElementById('panelLogoWrap');
+  if(salon.logo){ wrap.innerHTML=`<img src="${salon.logo}" class="header-logo">`; }
+  else { wrap.innerHTML='🐾'; wrap.className='header-logo-placeholder'; }
+}
+
+// trial removed
+
+function renderPanel(){
+  const pending  = requests.filter(r=>r.status==='pending');
+  const confirmed= requests.filter(r=>r.status==='confirmed');
+
+  document.getElementById('pt1').textContent = `📋 Solicitudes ${pending.length>0?'('+pending.length+')':''}`;
+
+  document.getElementById('pendingList').innerHTML =
+    pending.length ? pending.map(reqCard).join('') : '<p style="text-align:center;padding:40px 20px;color:var(--gray);font-size:14px">No hay solicitudes pendientes 🐾</p>';
+
+  document.getElementById('confirmedList').innerHTML =
+    confirmed.length ? confirmed.map(r=>reqCard(r,true)).join('') : '<p style="text-align:center;padding:40px 20px;color:var(--gray);font-size:14px">No hay turnos confirmados aún</p>';
+
+  renderStats();
+}
+
+function reqCard(r, confirmed=false){
+  const badge = r.status==='confirmed'
+    ? '<span class="req-badge badge-confirmed">✅ Confirmado</span>'
+    : r.status==='rejected'
+    ? '<span class="req-badge badge-rejected">❌ Rechazado</span>'
+    : '<span class="req-badge badge-pending">⏳ Pendiente</span>';
+
+  const actions = r.status==='pending' ? `
+    <div class="req-actions">
+      <button class="btn-confirm" onclick="confirmReq('${r.id}')">✅ Confirmar</button>
+      <button class="btn-reject" onclick="rejectReq('${r.id}')">✕</button>
+      <button class="btn-wa" onclick="contactClient('${r.id}')">📱</button>
+    </div>` :
+    r.status==='confirmed' ? `
+    <div class="req-actions">
+      <button class="btn-wa" onclick="contactClient('${r.id}')">📱 WhatsApp</button>
+      <button class="btn-reject" onclick="deleteReq('${r.id}')" style="background:#fff0f0;color:#e53e3e;border:1.5px solid #e53e3e;padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer">🗑 Borrar</button>
+    </div>` :
+    `<div class="req-actions"><button class="btn-wa" onclick="contactClient('${r.id}')">📱 WhatsApp</button></div>`;
+
+  return `<div class="req-card ${r.status}">
+    <div class="req-name">🐕 ${r.dog_name||'Sin nombre'} <span style="font-size:13px;color:var(--gray);font-family:'Nunito',sans-serif">(${r.dog_breed||'—'})</span></div>
+    <div class="req-meta">
+      👤 ${r.owner_name||'—'} · 📱 ${r.owner_phone||'—'}<br>
+      📏 ${r.dog_size||'—'} · 🎂 ${r.dog_age||'—'}<br>
+      ✂️ ${r.services||'—'}<br>
+      📅 ${r.availability||'—'}
+      ${r.dog_notes?'<br>⚠️ '+r.dog_notes:''}
+      ${r.confirmedSlot?'<br>✅ <strong>Turno confirmado: '+r.confirmedSlot+'</strong>':''}
+    </div>
+    ${badge}
+    ${actions}
+  </div>`;
+}
+
+function confirmReq(id){
+  const r = requests.find(x=>x.id===id);
+  if(!r) return;
+  const avail = r.availability ? r.availability.split(', ') : [];
+  let slot = avail[0]||'';
+  if(avail.length>1){
+    const choice = prompt('¿Qué horario confirmás?\n\n'+avail.map((s,i)=>`${i+1}. ${s}`).join('\n')+'\n\nEscribí el número:','1');
+    slot = avail[(parseInt(choice)||1)-1]||avail[0];
+  }
+  r.status='confirmed';
+  r.confirmedSlot=slot;
+  saveRequests();
+  sbUpdateStatus(r.id,'confirmed',slot);
+  renderPanel();
+  notifySalon(r,'confirmed');
+  toast('✅ Turno confirmado — '+slot);
+}
+
+function rejectReq(id){
+  const r = requests.find(x=>x.id===id);
+  if(!r) return;
+  r.status='rejected';
+  saveRequests();
+  sbUpdateStatus(r.id,'rejected','');
+  renderPanel();
+  toast('Solicitud rechazada');
+}
+
+function contactClient(id){
+  const r = requests.find(x=>x.id===id);
+  if(!r) return;
+  const msg = encodeURIComponent(`Hola ${r.owner_name}! 🐾 Te contacto de ${salon.name} por la solicitud de turno para ${r.dog_name}.`);
+  const clean = r.owner_phone.replace(/\D/g,'');
+  window.open(`https://wa.me/${clean}?text=${msg}`,'_blank');
+}
+
+function renderStats(){
+  var el=document.getElementById('statsView');
+  if(!el)return;
+  var total=requests.length;
+  var conf=requests.filter(function(r){return r.status==='confirmed';}).length;
+  var pend=requests.filter(function(r){return r.status==='pending';}).length;
+  var svc={},breed={};
+  requests.forEach(function(r){
+    if(r.services)r.services.split(/,|[|]/).forEach(function(s){var k=s.trim();if(k)svc[k]=(svc[k]||0)+1;});
+    if(r.dog_breed){var k=r.dog_breed.trim();if(k)breed[k]=(breed[k]||0)+1;}
+  });
+  var topSvc=Object.entries(svc).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(e){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div>';}).join('')||'<p style="color:#6b7280">Sin datos</p>';
+  var topBreed=Object.entries(breed).sort(function(a,b){return b[1]-a[1];}).slice(0,5).map(function(e){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div>';}).join('')||'<p style="color:#6b7280">Sin datos</p>';
+  el.innerHTML='<div style="padding:16px">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)"><div style="font-size:32px;font-weight:900;color:var(--green)">'+total+'</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Total</div></div>'
+    +'<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)"><div style="font-size:32px;font-weight:900;color:#16a34a">'+conf+'</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Confirmados</div></div>'
+    +'<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.08)"><div style="font-size:32px;font-weight:900;color:#f59e0b">'+pend+'</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Pendientes</div></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08)"><div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Servicios pedidos</div>'+topSvc+'</div>'
+    +'<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08)"><div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Razas frecuentes</div>'+topBreed+'</div>'
+    +'</div>';
+}
+
+function switchPTab(tab){
+  currentPTab=tab;
+  document.getElementById('pendingList').style.display   = tab==='pending'?'block':'none';
+  document.getElementById('confirmedList').style.display = tab==='confirmed'?'block':'none';
+  document.getElementById('agendaView').style.display    = tab==='agenda'?'block':'none';
+  document.getElementById('statsView').style.display     = tab==='stats'?'block':'none';
+  ['pt1','pt2','pt3','pt4'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('on'); });
+  const tabMap = {pending:'pt1',confirmed:'pt2',agenda:'pt3',stats:'pt4'};
+  const el = document.getElementById(tabMap[tab]);
+  if(el) el.classList.add('on');
+  if(tab==='agenda') renderAgenda();
+  if(tab==='stats') renderStats();
+}
+
+function renderAgenda(){
+  var view=document.getElementById('agendaView');
+  if(!view)return;
+  var now=new Date();
+  if(agendaYear===undefined){agendaYear=now.getFullYear();agendaMonth=now.getMonth();}
+  var year=agendaYear, month=agendaMonth;
+  var mNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var dNames=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var wNamesReal=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
+  var startDow=new Date(year,month,1).getDay();
+  var totalDays=new Date(year,month+1,0).getDate();
+  var color=salon.color||'#ff1493';
+
+  // Build byDay: map day-number -> array of appointments
+  var byDay={};
+  requests.filter(function(r){return r.status==='confirmed'&&r.confirmedSlot;}).forEach(function(r){
+    var slot=(r.confirmedSlot||'').trim();
+    // New format: "Miércoles 5/3/2026: 10:00"
+    var newFmt=slot.match(/^(\S+)\s+(\d+)\/(\d+)\/(\d+)[:\s]+(.+)$/);
+    if(newFmt){
+      var d=parseInt(newFmt[2]), m=parseInt(newFmt[3])-1, y=parseInt(newFmt[4]), time=newFmt[5].trim();
+      if(m===month&&y===year){
+        if(!byDay[d])byDay[d]=[];
+        byDay[d].push(Object.assign({},r,{time:time}));
+      }
+    } else {
+      // Old format: "Miércoles 10:00" - show on all matching DOW in month
+      var lsp=slot.lastIndexOf(' ');
+      var dName=lsp>0?slot.substring(0,lsp):slot;
+      var time=lsp>0?slot.substring(lsp+1):'--';
+      var dow=wNamesReal.indexOf(dName);
+      if(dow>=0){
+        for(var d=1;d<=totalDays;d++){
+          if(new Date(year,month,d).getDay()===dow){
+            if(!byDay[d])byDay[d]=[];
+            byDay[d].push(Object.assign({},r,{time:time}));
+          }
+        }
+      }
+    }
+  });
+
+  var html='<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:2px solid #f0f0f0">'
+    +'<button onclick="agendaMonth--;if(agendaMonth<0){agendaMonth=11;agendaYear--;}renderAgenda()" style="background:#f5f5f5;border:none;border-radius:50%;width:38px;height:38px;font-size:22px;font-weight:900;cursor:pointer">\u2039</button>'
+    +'<div style="font-weight:800;font-size:16px">'+mNames[month]+' '+year+'</div>'
+    +'<button onclick="agendaMonth++;if(agendaMonth>11){agendaMonth=0;agendaYear++;}renderAgenda()" style="background:#f5f5f5;border:none;border-radius:50%;width:38px;height:38px;font-size:22px;font-weight:900;cursor:pointer">\u203a</button>'
+    +'</div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(7,1fr);background:#f5f5f5;border-bottom:1px solid #eee">';
+  dNames.forEach(function(d){html+='<div style="text-align:center;font-size:11px;font-weight:800;color:#6b7280;padding:6px 0">'+d+'</div>';});
+  html+='</div>';
+  html+='<div id="calDetail" style="display:none;padding:14px 16px;background:#fff;border-bottom:1px solid #f0f0f0"></div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#e0e0e0">';
+  for(var i=0;i<startDow;i++)html+='<div style="background:#fafafa;min-height:40px"></div>';
+  for(var d=1;d<=totalDays;d++){
+    var apts=byDay[d]||[];
+    var numStyle='font-size:12px;font-weight:600;color:#1b2e22;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2px';
+    var dayMonth=mNames[month];
+    html+='<div onclick="showAgendaDay('+((startDow+d-1)%7)+','+d+',\''+dayMonth+'\','+year+')" style="background:#fff;min-height:40px;padding:4px 2px;cursor:pointer;text-align:center">';
+    html+='<div style="'+numStyle+'">'+d+'</div>';
+    if(apts.length>0){
+      html+='<div style="background:'+color+';color:#fff;border-radius:6px;font-size:10px;font-weight:800;padding:1px 3px;margin:0 2px">'+apts.length+' turno'+(apts.length>1?'s':'')+'</div>';
+    }
+    html+='</div>';
+  }
+  html+='</div>';
+  view.innerHTML=html;
+}
+
+let agendaYear, agendaMonth;
+
+function showAgendaDay(dow, dayNum, monthName, year){
+  var wFull=['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
+  var mNames=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var month=mNames.indexOf(monthName);
+  var dayName=(typeof dow==='number')?(wFull[dow]||''):dow;
+
+  var apts=requests.filter(function(r){
+    if(r.status!=='confirmed'||!r.confirmedSlot)return false;
+    var slot=(r.confirmedSlot||'').trim();
+    // New format: "Miércoles 5/3/2026: 10:00"
+    var newFmt=slot.match(/^(\S+)\s+(\d+)\/(\d+)\/(\d+)[:\s]+(.+)$/);
+    if(newFmt){
+      return parseInt(newFmt[2])===dayNum && parseInt(newFmt[3])-1===month && parseInt(newFmt[4])===year;
+    }
+    // Old format: "Miércoles 10:00"
+    var lsp=slot.lastIndexOf(' ');
+    var dName=lsp>0?slot.substring(0,lsp):slot;
+    return dName===dayName;
+  }).map(function(r){
+    var slot=(r.confirmedSlot||'').trim();
+    var newFmt=slot.match(/^(\S+)\s+(\d+)\/(\d+)\/(\d+)[:\s]+(.+)$/);
+    var time=newFmt?newFmt[5].trim():slot.split(' ').pop();
+    return Object.assign({},r,{time:time});
+  }).sort(function(a,b){return (a.time||'').localeCompare(b.time||'');});
+
+  var detail=document.getElementById('calDetail');
+  if(!detail)return;
+  detail.style.display='block';
+  if(!apts.length){
+    detail.innerHTML='<div style="text-align:center;color:#6b7280;font-size:14px;padding:10px">Sin turnos para '+dayName+' '+dayNum+'</div>';
+    return;
+  }
+  var html='<div style="font-size:14px;font-weight:800;color:#1a1a2e;margin-bottom:10px">'+dayName+' '+dayNum+' de '+monthName+'</div>';
+  apts.forEach(function(r){
+    html+='<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5">'
+      +'<div style="background:var(--green);color:#fff;border-radius:8px;padding:4px 8px;font-size:13px;font-weight:900;min-width:50px;text-align:center;flex-shrink:0">'+r.time+'</div>'
+      +'<div><div style="font-size:14px;font-weight:800">'+(r.dog_name||'--')+' <span style="font-weight:500;color:#6b7280">('+( r.dog_breed||'--')+')</span></div>'
+      +'<div style="font-size:12px;color:#6b7280">'+(r.owner_name||'--')+' \u00b7 '+(r.owner_phone||'--')+'</div>'
+      +'<div style="font-size:12px;color:var(--green);font-weight:700">'+(r.services||'--')+'</div></div></div>';
+  });
+  detail.innerHTML=html;
+}
+
+// ── SHARE ─────────────────────────────────────────────────
+function openShare(){
+  const base = 'https://fccrisrian2-svg.github.io/Pelucan';
+  const waClean = salon.wa.replace(/\D/g,'');
+  // Encode schedule and services so any device can show correct days/hours
+  const schedEnc = encodeURIComponent(JSON.stringify(salon.schedule||{}));
+  const svcsEnc  = encodeURIComponent(JSON.stringify(salon.services||[]));
+  const url = `${base}?salon=${salon.id}&wa=${waClean}&name=${encodeURIComponent(salon.name||'')}&sched=${schedEnc}&svcs=${svcsEnc}`;
+  document.getElementById('shareLink').textContent = url;
+  document.getElementById('shareModal').classList.add('open');
+}
+function closeShare(){ document.getElementById('shareModal').classList.remove('open'); }
+function copyLink(){
+  const url = document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(url).then(()=>toast('✅ ¡Link copiado!')).catch(()=>toast('Copiá el link manualmente'));
+}
+function shareWa(){
+  const url = document.getElementById('shareLink').textContent;
+  const msg = encodeURIComponent(`📍 Pedí tu turno en ${salon.name}: ${url}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+}
+
+// ── BOOKING ───────────────────────────────────────────────
+function applyBookingHeader(){
+  document.getElementById('bookingName').textContent = salon.name||'PeluCan';
+  document.getElementById('bookingAddr').textContent = salon.addr||'';
+  const wrap = document.getElementById('bookingLogoWrap');
+  if(salon.logo){
+    if(wrap.tagName==='IMG'){ wrap.src=salon.logo; }
+    else { wrap.outerHTML=`<img src="${salon.logo}" class="header-logo" id="bookingLogoWrap">`; }
+  } else {
+    if(wrap.tagName==='IMG'){ wrap.outerHTML=`<div class="header-logo-placeholder" id="bookingLogoWrap">🐾</div>`; }
+    else { wrap.textContent='🐾'; }
+  }
+}
+
+function showBookingTab(tab){
+  ['turnos','cursos','abonos'].forEach(t=>{
+    document.getElementById(`tab${capitalize(t)}-content`).style.display = t===tab?'block':'none';
+    document.getElementById(`tab${capitalize(t)}`).classList.toggle('on', t===tab);
+  });
+}
+
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+function renderBookingServices(){
+  const services = salon.services.length ? salon.services : ['Baño + corte','Baño','Tratamiento de pelo','Spa canino','Pelado al ras'];
+  document.getElementById('svcList').innerHTML = services.map(s=>`
+    <div class="svc-item" onclick="this.classList.toggle('on')">
+      <span class="svc-item-name">${s}</span>
+      <div class="svc-check">✓</div>
+    </div>`).join('');
+}
+
+function getBlockedSlots(){
+  return requests
+    .filter(r=>r.status==='confirmed' && r.confirmedSlot)
+    .map(r=>r.confirmedSlot);
+}
+
+let selectedSlots = {};
+
+function renderAvailSlots(){
+  selectedSlots={};
+  var now=new Date();
+  _calYear=now.getFullYear(); _calMonth=now.getMonth();
+  renderBookingCal();
+  var e1=document.getElementById('hoursForDay');
+  var e2=document.getElementById('slotsSummary');
+  if(e1)e1.style.display='none';
+  if(e2)e2.style.display='none';
+}
+
+function selectDay(day){
+  /* replaced by calendar */
+}
+
+function toggleSlot(el){
+  var dk=el.dataset.datekey||el.dataset.day,h=el.dataset.hour;
+  document.querySelectorAll('.avail-slot.on').forEach(function(x){x.classList.remove('on');});
+  el.classList.add('on');
+  selectedSlots={};selectedSlots[dk]=[h];
+  updateSlotsSummary();
+}
+
+function updateSlotsSummary(){
+  var lines=[];
+  Object.keys(selectedSlots).forEach(function(k){
+    var h=selectedSlots[k];if(h&&h.length)lines.push(k+': '+h.join(', '));
+  });
+  var sum=document.getElementById('slotsSummary'),lst=document.getElementById('slotsList');
+  if(!sum||!lst)return;
+  if(lines.length){sum.style.display='block';lst.innerHTML=lines.join('<br>');}
+  else sum.style.display='none';
+}
+
+function getSelectedSlotsText(){
+  var parts=[];
+  Object.keys(selectedSlots).forEach(function(k){
+    var h=selectedSlots[k];if(h&&h.length)parts.push(k+': '+h.join(', '));
+  });
+  return parts.join(' | ');
+}
+
+function nextStep(){
+  if(!validateStep()) return;
+  if(currentStep===4){ submitBooking(); return; }
+  currentStep++;
+  updateSteps();
+  if(currentStep===3) renderBookingServices();
+  if(currentStep===4) renderAvailSlots();
+}
+
+function prevStep(){
+  if(currentStep>1){ currentStep--; updateSteps(); }
+}
+
+function updateSteps(){
+  for(let i=1;i<=4;i++){
+    document.getElementById(`step${i}`).classList.toggle('active',i===currentStep);
+    const dot=document.getElementById(`sd${i}`);
+    dot.classList.toggle('active',i===currentStep);
+    dot.classList.toggle('done',i<currentStep);
+    if(i<4){ const line=document.getElementById(`sl${i}`); line.classList.toggle('done',i<currentStep); }
+  }
+  document.getElementById('btnBack').style.display = currentStep>1?'block':'none';
+  document.getElementById('btnNext').textContent = currentStep===4?'Enviar solicitud 🐾':'Continuar →';
+}
+
+function validateStep(){
+  if(currentStep===1){
+    if(!document.getElementById('bOwnerName').value.trim()){ toast('⚠️ Ingresá tu nombre'); return false; }
+    if(!document.getElementById('bOwnerPhone').value.trim()){ toast('⚠️ Ingresá tu WhatsApp'); return false; }
+  }
+  if(currentStep===2){
+    if(!document.getElementById('bDogName').value.trim()){ toast('⚠️ Ingresá el nombre de tu perro'); return false; }
+    if(!document.getElementById('bDogSize').value){ toast('⚠️ Seleccioná el tamaño de tu perro'); return false; }
+  }
+  if(currentStep===3){
+    if(!document.querySelector('#svcList .svc-item.on')){ toast('⚠️ Seleccioná al menos un servicio'); return false; }
+  }
+  if(currentStep===4){
+    if(!getSelectedSlotsText()){ toast('⚠️ Seleccioná al menos un horario disponible'); return false; }
+  }
+  return true;
+}
+
+function submitBooking(){
+  const svcs = [...document.querySelectorAll('#svcList .svc-item.on')].map(i=>i.querySelector('.svc-item-name').textContent).join(', ');
+  const avail = getSelectedSlotsText();
+  const request = {
+    id: 'req_'+Math.random().toString(36).substr(2,8),
+    salon_id: salon.id,
+    owner_name:  document.getElementById('bOwnerName').value.trim(),
+    owner_phone: document.getElementById('bOwnerPhone').value.trim(),
+    owner_email: document.getElementById('bOwnerEmail').value.trim(),
+    dog_name:    document.getElementById('bDogName').value.trim(),
+    dog_breed:   document.getElementById('bDogBreed').value.trim(),
+    dog_age:     document.getElementById('bDogAge').value.trim(),
+    dog_size:    document.getElementById('bDogSize').value,
+    dog_notes:   document.getElementById('bDogNotes').value.trim(),
+    services:    svcs,
+    availability:avail,
+    extra_note:  document.getElementById('bExtraNotes').value.trim(),
+    status:      'pending',
+    confirmedSlot: '',
+    created_at:  new Date().toISOString()
+  };
+  requests.push(request);
+  saveRequests();
+  sbSaveRequest(request);
+  notifySalon(request,'new');
+  showScreen('success');
+  const waBtn = document.getElementById('waSuccessBtn');
+  if(waBtn && window._pendingWaLink){
+    waBtn.href = window._pendingWaLink;
+  }
+}
+
+function resetBooking(){
+  currentStep=1;
+  updateSteps();
+  ['bOwnerName','bOwnerPhone','bOwnerEmail','bDogName','bDogBreed','bDogAge','bDogNotes','bExtraNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bDogSize').value='';
+  showBookingTab('turnos');
+  showScreen('bookingScreen');
+}
+
+// ── NOTIFY SALON VIA WHATSAPP ─────────────────────────────
+function notifySalon(req, type){
+  if(type==='new'){
+    const msg = encodeURIComponent(
+      `🐾 *Nueva solicitud de turno!*\n\n`+
+      `👤 *Cliente:* ${req.owner_name}\n`+
+      `📱 *WhatsApp:* ${req.owner_phone}\n`+
+      `🐕 *Perro:* ${req.dog_name} (${req.dog_breed||'sin raza'})\n`+
+      `📏 *Tamaño:* ${req.dog_size||'—'}\n`+
+      `🎂 *Edad:* ${req.dog_age||'—'}\n`+
+      `✂️ *Servicio:* ${req.services}\n`+
+      `📅 *Disponibilidad:* ${req.availability}\n`+
+      (req.dog_notes?`⚠️ *Obs:* ${req.dog_notes}\n`:'')+
+      (req.extra_note?`💬 *Nota:* ${req.extra_note}\n`:'')+
+      `\n_Enviado desde PeluCan_`
+    );
+    if(salon.wa){
+      const clean = salon.wa.replace(/\D/g,'');
+      // Store WA link for success screen button
+      window._pendingWaLink = `https://wa.me/${clean}?text=${msg}`;
+    }
+  }
+}
+
+// ── CURSOS & ABONOS ───────────────────────────────────────
+function toggleCurso(header){
+  const body  = header.nextElementSibling;
+  const arrow = header.querySelector('.curso-arrow');
+  const isOpen= body.classList.contains('open');
+  document.querySelectorAll('.curso-body').forEach(b=>b.classList.remove('open'));
+  document.querySelectorAll('.curso-arrow').forEach(a=>a.classList.remove('open'));
+  if(!isOpen){ body.classList.add('open'); arrow.classList.add('open'); }
+}
+
+function consultarCurso(nombre){
+  if(!salon.wa){ toast('⚠️ WhatsApp no configurado'); return; }
+  const msg = encodeURIComponent(`Hola! Vi el link de ${salon.name||'la peluquería'} y me interesa el *${nombre}*. ¿Me podés dar más información? 🐾`);
+  const clean = salon.wa.replace(/\D/g,'');
+  window.open(`https://wa.me/${clean}?text=${msg}`,'_blank');
+}
+
+
+// ── SUPABASE ─────────────────────────────────────────────
+const SB_URL = 'https://oeqymptofytmzyleghtg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lcXltcHRvZnl0bXp5bGVnaHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTcyOTQsImV4cCI6MjA4Nzk5MzI5NH0.-ms5-bHtXtub9OozB9iXM-vxYFAvlBkV11_CYFAlQtw';
+
+async function sbFetch(path, method='GET', body=null){
+  try{
+    const opts = {
+      method,
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': method==='POST' ? 'return=minimal' : ''
+      }
+    };
+    if(body) opts.body = JSON.stringify(body);
+    const r = await fetch(SB_URL + path, opts);
+    if(method==='GET') return await r.json();
+    return r.ok;
+  }catch(e){ console.error('SB error:', e); return null; }
+}
+
+async function sbSaveRequest(req){
+  return await sbFetch('/rest/v1/turnos', 'POST', {
+    id: req.id,
+    salon_id: req.salon_id,
+    owner_name: req.owner_name,
+    owner_phone: req.owner_phone,
+    owner_email: req.owner_email,
+    dog_name: req.dog_name,
+    dog_breed: req.dog_breed,
+    dog_age: req.dog_age,
+    dog_size: req.dog_size,
+    dog_notes: req.dog_notes,
+    services: req.services,
+    availability: req.availability,
+    extra_note: req.extra_note,
+    status: req.status,
+    confirmed_slot: req.confirmedSlot||''
+  });
+}
+
+async function sbUpdateStatus(id, status, confirmedSlot){
+  return await sbFetch(`/rest/v1/turnos?id=eq.${id}`, 'PATCH', {status, confirmed_slot: confirmedSlot||''});
+}
+
+async function sbLoad(salonId){
+  const data = await sbFetch(`/rest/v1/turnos?salon_id=eq.${salonId}&order=created_at.desc`);
+  if(data && Array.isArray(data)){
+    requests = data.map(r=>({
+      id: r.id,
+      salon_id: r.salon_id,
+      owner_name: r.owner_name,
+      owner_phone: r.owner_phone,
+      owner_email: r.owner_email,
+      dog_name: r.dog_name,
+      dog_breed: r.dog_breed,
+      dog_age: r.dog_age,
+      dog_size: r.dog_size,
+      dog_notes: r.dog_notes,
+      services: r.services,
+      availability: r.availability,
+      extra_note: r.extra_note,
+      status: r.status,
+      confirmedSlot: r.confirmed_slot,
+      created_at: r.created_at
+    }));
+    saveRequests();
+  }
+}
+
+
+// ── COLOR THEME ───────────────────────────────────────────
+function hexToRgba(hex, alpha){
+  try{
+    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return 'rgba('+r+','+g+','+b+','+alpha+')';
+  }catch(e){return hex;}
+}
+function applyColor(color){
+  // colors fixed in CSS
+}
+
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── EDITOR CURSOS/ABONOS ──────────────────────────────────
+function getCont(){
+  try{ return JSON.parse(localStorage.getItem('pelucan_content')||'{}'); }catch(e){ return {}; }
+}
+function saveCont(d){
+  localStorage.setItem('pelucan_content', JSON.stringify(d));
+}
+
+function goEditContent(){
+  var d = getCont();
+  function sv(id, key, def){ var el=document.getElementById(id); if(el) el.value = (d[key]!==undefined) ? d[key] : def; }
+  sv('ec1_dur',   'c1_dur',   '2 meses - 8 clases - 100% practico');
+  sv('ec1_desc',  'c1_desc',  'Curso unico en la zona. No hace falta que traigas mascotas. Cupo: 5 personas. Al finalizar: certificado de asistencia.');
+  sv('ec1_p1',    'c1_p1',    '$450.000');
+  sv('ec1_p2',    'c1_p2',    '$500.000');
+  sv('ec1_p3',    'c1_p3',    '$78.000 c/u');
+  sv('ec1_p4',    'c1_p4',    '$540.000');
+  sv('ec1_p5',    'c1_p5',    '$50.000');
+  sv('ec2_dur',   'c2_dur',   '1 jornada - A coordinar');
+  sv('ec2_desc',  'c2_desc',  'Perfecciona tu tecnica en una jornada. Trae tus tijeras, peine y cardinas.');
+  sv('ec2_tipos', 'c2_tipos', 'Manto duro y lacio\nCortes comerciales\nTattoo y tenidos\nPersonalizados');
+  sv('ec2_p1',    'c2_p1',    '$100.000');
+  sv('ec2_p2',    'c2_p2',    '$140.000');
+  sv('ec3_desc',  'c3_desc',  '7 videos grabados en la peluqueria canina real.');
+  sv('ec3_p1',    'c3_p1',    '$200.000');
+  sv('ea1_desc',  'a1_desc',  '2 banos + 1 corte');
+  sv('ea1_precio','a1_precio','Desde $38.000');
+  sv('ea1_nota',  'a1_nota',  'Se abona completo antes de comenzar.');
+  sv('ea2_desc',  'a2_desc',  '4 banos + 1 corte');
+  sv('ea2_precio','a2_precio','Desde $69.000');
+  sv('ea2_nota',  'a2_nota',  'Se abona completo antes de comenzar.');
+  sv('ep_alias',  'p_alias',  'coketospelu.mp');
+  sv('ep_titular','p_titular','Nanci Gabriela Alba');
+  showScreen('editorScreen');
+}
+
+function saveContent(){
+  function gv(id){ var el=document.getElementById(id); return el ? el.value : ''; }
+  var d = {
+    c1_dur:gv('ec1_dur'), c1_desc:gv('ec1_desc'),
+    c1_p1:gv('ec1_p1'), c1_p2:gv('ec1_p2'), c1_p3:gv('ec1_p3'), c1_p4:gv('ec1_p4'), c1_p5:gv('ec1_p5'),
+    c2_dur:gv('ec2_dur'), c2_desc:gv('ec2_desc'), c2_tipos:gv('ec2_tipos'),
+    c2_p1:gv('ec2_p1'), c2_p2:gv('ec2_p2'),
+    c3_desc:gv('ec3_desc'), c3_p1:gv('ec3_p1'),
+    a1_desc:gv('ea1_desc'), a1_precio:gv('ea1_precio'), a1_nota:gv('ea1_nota'),
+    a2_desc:gv('ea2_desc'), a2_precio:gv('ea2_precio'), a2_nota:gv('ea2_nota'),
+    p_alias:gv('ep_alias'), p_titular:gv('ep_titular')
+  };
+  saveCont(d);
+  renderDynamicContent();
+  toast('Cambios guardados');
+  setTimeout(function(){ showScreen('setupScreen'); }, 800);
+}
+
+function renderDynamicContent(){
+  var d = getCont();
+  function st(id, val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+  st('dyn_c1_dur',    d.c1_dur    || '2 meses - 8 clases');
+  st('dyn_c2_dur',    d.c2_dur    || '1 jornada - A coordinar');
+  st('dyn_a1_desc',   d.a1_desc   || '2 banos + 1 corte');
+  st('dyn_a1_precio', d.a1_precio || 'Desde $38.000');
+  st('dyn_a2_desc',   d.a2_desc   || '4 banos + 1 corte');
+  st('dyn_a2_precio', d.a2_precio || 'Desde $69.000');
+}
+
+
+var _calYear,_calMonth;
+function renderBookingCal(){
+  var wrap=document.getElementById('bookingCalWrap');
+  if(!wrap)return;
+  var y=_calYear,m=_calMonth;
+  var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var DN=['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var D2N=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var fd=new Date(y,m,1).getDay(),tot=new Date(y,m+1,0).getDate();
+  var hoy=new Date(); hoy.setHours(0,0,0,0);
+  function norm(x){return (x||'').replace(/é/g,'e').replace(/á/g,'a').toLowerCase();}
+  function hasH(dn){
+    if(dn==='Domingo')return false;
+    if(!salon.schedule)return true;
+    var ok=false;
+    Object.keys(salon.schedule).forEach(function(k){
+      if(norm(k)===norm(dn)&&salon.schedule[k].length>0)ok=true;
+    });
+    return ok;
+  }
+  var h='<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0f0f0">'
+    +'<button onclick="_calMonth--;if(_calMonth<0){_calMonth=11;_calYear--;}renderBookingCal()" style="background:#f5f5f5;border:none;border-radius:50%;width:34px;height:34px;font-size:20px;font-weight:900;cursor:pointer">‹</button>'
+    +'<div style="font-weight:800;font-size:15px">'+MN[m]+' '+y+'</div>'
+    +'<button onclick="_calMonth++;if(_calMonth>11){_calMonth=0;_calYear++;}renderBookingCal()" style="background:#f5f5f5;border:none;border-radius:50%;width:34px;height:34px;font-size:20px;font-weight:900;cursor:pointer">›</button>'
+    +'</div><div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid #f0f0f0">';
+  DN.forEach(function(x){h+='<div style="text-align:center;font-size:11px;font-weight:800;color:#6b7280;padding:6px 0">'+x+'</div>';});
+  h+='</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#e0e0e0">';
+  for(var i=0;i<fd;i++)h+='<div style="background:#fafafa;min-height:44px"></div>';
+  for(var d=1;d<=tot;d++){
+    var dow=(fd+d-1)%7, dn=D2N[dow];
+    var dt=new Date(y,m,d); dt.setHours(0,0,0,0);
+    var avail=hasH(dn)&&dt>=hoy;
+    if(avail){
+      h+='<div class="cal-day-btn" data-y="'+y+'" data-m="'+m+'" data-d="'+d+'" data-dn="'+encodeURIComponent(dn)+'" style="background:#fff;min-height:44px;padding:6px 2px;cursor:pointer;text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:#1a1a2e">'+d+'</div>'
+        +'<div style="width:5px;height:5px;border-radius:50%;background:var(--green);margin:2px auto 0"></div>'
+        +'</div>';
+    } else {
+      h+='<div style="background:#fafafa;min-height:44px;padding:6px 2px;text-align:center">'
+        +'<div style="font-size:13px;font-weight:600;color:#ccc">'+d+'</div>'
+        +'</div>';
+    }
+  }
+  h+='</div>';
+  wrap.innerHTML=h;
+  wrap.querySelectorAll('.cal-day-btn').forEach(function(el){
+    el.addEventListener('click',function(){
+      bookingPickDate(parseInt(this.dataset.y),parseInt(this.dataset.m),parseInt(this.dataset.d),decodeURIComponent(this.dataset.dn));
+    });
+  });
+}
+function bookingPickDate(y,m,d,dn){
+  var MN=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var dateKey=dn+' '+d+'/'+(m+1)+'/'+y;
+  function norm(x){return (x||'').replace(/é/g,'e').replace(/á/g,'a').toLowerCase();}
+  var ALL=['8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+  var SAT=['9:00','10:00','11:00','12:00'];
+  var hours=null;
+  if(salon.schedule){
+    Object.keys(salon.schedule).forEach(function(k){if(norm(k)===norm(dn)&&salon.schedule[k].length>0)hours=salon.schedule[k];});
+  }
+  if(hours&&hours.length){
+    hours=hours.slice();
+    // Saturday always includes 12:00
+    if(dn.indexOf('bado')>=0&&hours.indexOf('12:00')<0) hours.push('12:00');
+    hours.sort(function(a,b){return parseInt(a)-parseInt(b);});
+  } else {
+    hours=dn.indexOf('bado')>=0?SAT:ALL;
+  }
+  var blocked=getBlockedSlots();
+  selectedSlots={};selectedSlots[dateKey]=[];
+  document.getElementById('selectedDayLabel').textContent=dn+' '+d+' de '+MN[m];
+  document.getElementById('hoursForDay').style.display='block';
+  document.getElementById('availGrid').innerHTML=hours.map(function(h){
+    var isB=blocked.indexOf(dn+' '+h)>=0;
+    return '<div class="avail-slot'+(isB?' blocked':'')+'" data-datekey="'+dateKey+'" data-day="'+dn+'" data-hour="'+h+'" '+(isB?'':'onclick="toggleSlot(this)"')+'><div class="time" style="font-size:14px;font-weight:900">'+(isB?'&#10060;':h)+'</div></div>';
+  }).join('');
+  document.getElementById('slotsSummary').style.display='none';
+  setTimeout(function(){var e=document.getElementById('hoursForDay');if(e)e.scrollIntoView({behavior:'smooth',block:'nearest'});},150);
+}
+
+function deleteReq(id){
+  var r=requests.find(function(x){return x.id===id;});
+  if(!r)return;
+  var name=r.dog_name||'este turno';
+  if(!confirm('Borrar el turno de '+name+'?\nEsta accion no se puede deshacer.'))return;
+  requests=requests.filter(function(x){return x.id!==id;});
+  saveRequests();
+  // Also delete from Supabase
+  sbFetch('/rest/v1/turnos?id=eq.'+id, 'DELETE');
+  renderPanel();
+  renderAgenda();
+  toast('Turno eliminado');
+}
+</script>
+</body>
+</html>
