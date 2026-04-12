@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PeluCan</title>
+<meta name="theme-color" content="#ff1493">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#ff1493;--green2:#00bcd4;--green3:#ffb3d9;
+  --mint:#fff0f7;--dark:#1a1a2e;--text:#333;--gray:#6b7280;
+  --celeste:#00bcd4;--bg:#f4faf6;--radius:16px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--accent:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto}
+button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;outline:none}
+input,select,textarea{font-family:'Nunito',sans-serif;outline:none;border:2px solid #e0ede2;border-radius:10px;padding:11px 13px;width:100%;font-size:14px;background:#fff;color:var(--dark);transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--green2)}
+textarea{resize:vertical;min-height:80px}
+label{font-size:12px;font-weight:800;color:var(--green);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;display:block}
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+/* SPLASH */
+#splash{background:linear-gradient(160deg,#1a1a2e 0%,#ff1493 50%,#00bcd4 100%);align-items:center;justify-content:center;text-align:center;padding:40px 24px}
+.splash-logo{font-size:72px;margin-bottom:12px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.splash-title{font-family:'Playfair Display',serif;font-size:36px;color:#fff;font-weight:900;line-height:1.1;margin-bottom:8px}
+.splash-sub{font-size:14px;color:var(--green3);margin-bottom:48px;font-weight:600}
+.splash-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:280px}
+.btn-primary{background:#fff;color:var(--green);font-size:16px;font-weight:900;padding:16px;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.btn-secondary{background:rgba(255,255,255,.15);color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:50px;border:2px solid rgba(255,255,255,.3)}
+
+/* HEADER */
+.header{background:var(--green);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.header-back{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-logo{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.4);flex-shrink:0}
+.header-logo-placeholder{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.header-info{flex:1;min-width:0}
+.header-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-addr{font-size:11px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer}
+
+.body-scroll{flex:1;overflow-y:auto;padding:16px}
+.section-card{background:#fff;border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.field{margin-bottom:12px}
+
+/* CHIPS */
+.svc-grid{display:flex;flex-wrap:wrap;gap:8px}
+.svc-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.svc-chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.days-grid{display:flex;flex-wrap:wrap;gap:8px}
+.day-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s}
+.day-chip.on{background:var(--green);border-color:var(--green);color:#fff}
+.day-chip.editing{background:var(--green2);border-color:var(--green2);color:#fff}
+.hours-row{display:flex;flex-wrap:wrap;gap:8px}
+.hour-chip{background:#f5faf6;border:2px solid #e0ede2;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s}
+.hour-chip.on{background:var(--green2);border-color:var(--green2);color:#fff}
+
+.btn-save{background:var(--green);color:#fff;font-size:16px;font-weight:900;padding:16px;border-radius:50px;width:100%;transition:opacity .2s}
+.btn-save:active{opacity:.8}
+
+/* STEPS */
+.step-indicator{display:flex;align-items:center;justify-content:center;padding:16px 0 8px}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;background:#e0ede2;color:var(--gray);flex-shrink:0;transition:all .3s}
+.step-dot.done{background:var(--celeste);color:#fff}
+.step-dot.active{background:var(--green);color:#fff;box-shadow:0 0 0 4px rgba(255,20,147,.2)}
+.step-line{flex:1;height:2px;background:#e0ede2;max-width:32px;transition:background .3s}
+.step-line.done{background:var(--green2)}
+.form-step{display:none;padding:0 16px 16px;animation:fadeIn .3s}
+.form-step.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.step-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);font-weight:700;margin-bottom:16px}
+.step-btns{display:flex;gap:10px;padding:0 16px 20px}
+.btn-next{background:var(--green);color:#fff;font-size:15px;font-weight:900;padding:14px;border-radius:50px;flex:1}
+.btn-back-step{background:#f5faf6;color:var(--gray);font-size:15px;font-weight:700;padding:14px;border-radius:50px;flex:1;border:2px solid #e0ede2}
+
+/* SVC LIST (cliente) */
+.svc-list{display:flex;flex-direction:column;gap:10px}
+.svc-item{background:#fff;border:2px solid #e0ede2;border-radius:12px;padding:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:all .2s}
+.svc-item.on{border-color:var(--green);background:var(--mint)}
+.svc-item-name{font-weight:700;font-size:14px;color:var(--dark)}
+.svc-check{width:22px;height:22px;border-radius:50%;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;flex-shrink:0}
+.svc-item.on .svc-check{background:var(--green);border-color:var(--green);color:#fff}
+
+/* AVAIL SLOTS */
+.avail-slot{background:#fff;border:2px solid #e0ede2;border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .2s}
+.avail-slot.on{background:var(--mint);border-color:var(--green)}
+.avail-slot .time{font-size:14px;font-weight:900;color:var(--dark)}
+.avail-slot.on .time{color:var(--green)}
+.avail-slot.blocked{opacity:.4;pointer-events:none;background:#f5f5f5}
+
+/* PANEL */
+.panel-tabs{display:flex;background:#fff;border-bottom:2px solid var(--mint);position:sticky;top:68px;z-index:50}
+.p-tab{flex:1;padding:14px 8px;text-align:center;font-size:13px;font-weight:800;color:var(--gray);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+.p-tab.on{color:var(--green);border-color:var(--green)}
+.req-card{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);border-left:4px solid var(--green3)}
+.req-card.confirmed{border-color:var(--green2)}
+.req-card.rejected{border-color:#fca5a5;opacity:.7}
+.req-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--dark)}
+.req-meta{font-size:12px;color:var(--gray);margin-top:4px;line-height:1.7}
+.req-badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;margin-top:8px}
+.badge-pending{background:#fef3c7;color:#92400e}
+.badge-confirmed{background:#d1fae5;color:#065f46}
+.badge-rejected{background:#fee2e2;color:#991b1b}
+.req-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.btn-confirm{background:var(--green);color:#fff;font-size:13px;font-weight:800;padding:10px 16px;border-radius:50px;flex:1}
+.btn-reject{background:#fee2e2;color:#dc2626;font-size:13px;font-weight:800;padding:10px 16px;border-radius:50px}
+.btn-wa{background:#25D366;color:#fff;font-size:13px;font-weight:800;padding:10px 14px;border-radius:50px}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:430px;margin:0 auto}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);margin-bottom:16px;text-align:center}
+.link-box{background:var(--mint);border-radius:12px;padding:14px;font-size:13px;color:var(--green);font-weight:700;word-break:break-all;margin-bottom:12px;text-align:center}
+.btn-copy{background:var(--green);color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:50px;width:100%;margin-bottom:10px}
+.btn-share-wa{background:#25D366;color:#fff;font-size:15px;font-weight:800;padding:14px;border-radius:50px;width:100%;margin-bottom:10px}
+.btn-modal-close{background:#f5faf6;color:var(--gray);font-size:15px;font-weight:700;padding:12px;border-radius:50px;width:100%}
+.slot-modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;align-items:flex-end}
+.slot-modal.open{display:flex}
+.slot-modal-box{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:430px;margin:0 auto;max-height:80vh;overflow-y:auto}
+.slot-option{background:#f5faf6;border:2px solid #e0ede2;border-radius:12px;padding:14px 16px;margin-bottom:10px;cursor:pointer;font-size:14px;font-weight:700;color:var(--dark)}
+.slot-option:active{background:var(--mint);border-color:var(--green)}
+
+/* BOTTOM NAV */
+.bottom-nav{background:#fff;border-top:1px solid #e0ede2;display:flex;position:sticky;bottom:0;z-index:100}
+.nav-btn{flex:1;padding:12px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:800;color:var(--gray);cursor:pointer;background:none;border:none}
+.nav-btn.on{color:var(--green)}
+.nav-icon{font-size:22px}
+
+/* SUCCESS */
+#success{background:linear-gradient(160deg,#1a1a2e,#ff1493);align-items:center;justify-content:center;text-align:center;padding:40px 24px}
+.success-icon{font-size:80px;margin-bottom:20px;animation:pop .5s cubic-bezier(.17,.67,.38,1.5)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-family:'Playfair Display',serif;font-size:28px;color:#fff;margin-bottom:10px}
+.success-sub{font-size:14px;color:var(--green3);line-height:1.6;margin-bottom:30px}
+.btn-new{background:#fff;color:var(--green);font-size:15px;font-weight:900;padding:15px 32px;border-radius:50px}
+
+/* MISC */
+.aviso-box{background:#fff3cd;border:1px solid #fbbf24;border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#92400e;line-height:1.6}
+.incluye-box{background:linear-gradient(135deg,var(--mint),#f0faf2);border:2px solid var(--green3);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.incluye-title{font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.incluye-items{display:flex;flex-wrap:wrap;gap:6px}
+.incluye-chip{background:#fff;border:1px solid var(--green3);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;color:var(--green)}
+.logo-preview{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--green3);display:none;margin-bottom:8px}
+.logo-upload-btn{background:var(--mint);border:2px dashed var(--green3);border-radius:12px;padding:16px;text-align:center;cursor:pointer;width:100%;font-size:13px;font-weight:700;color:var(--green)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--dark);color:#fff;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <div class="splash-logo">🐾</div>
+  <h1 class="splash-title">PeluCan</h1>
+  <p class="splash-sub">Turnos para peluquerías caninas</p>
+  <div class="splash-btns">
+    <button class="btn-primary" onclick="btnSoyPeluquero()">🐶 Soy peluquero/a</button>
+    <button class="btn-secondary" onclick="btnYaTengoCuenta()">Ya tengo cuenta</button>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="screen" id="setupScreen">
+  <div class="header">
+    <button class="header-back" onclick="salon.id ? btnYaTengoCuenta() : showScreen('splash')">←</button>
+    <div class="header-info"><div class="header-name">Configurar mi peluquería</div></div>
+  </div>
+  <div class="body-scroll">
+    <div class="section-card">
+      <div class="section-title">📷 Logo</div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <img id="logoPreview" class="logo-preview" src="">
+        <label for="logoInput" class="logo-upload-btn">📁 Subir logo (opcional)<br><span style="font-size:11px;font-weight:600;color:var(--gray)">JPG, PNG · Máx 2MB</span></label>
+        <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="handleLogo(this)">
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">🏪 Tu peluquería</div>
+      <div class="field"><label>Nombre</label><input id="sName" type="text" placeholder="Coketos Peluquería Canina"></div>
+      <div class="field"><label>Slogan (opcional)</label><input id="sSlogan" type="text" placeholder="El mejor look para tu perrito 🐶"></div>
+      <div class="field"><label>WhatsApp (con código de área)</label><input id="sWa" type="tel" placeholder="3416123456"></div>
+      <div class="field"><label>Dirección</label><input id="sAddr" type="text" placeholder="Río Negro 336, Villa Cassini"></div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">✂️ Servicios que ofrecés</div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:12px">Tocá para activar o desactivar. Solo los activos verá el cliente.</p>
+      <div class="svc-grid" id="svcGrid">
+        <div class="svc-chip" data-svc="Baño + corte">✂️ Baño + corte</div>
+        <div class="svc-chip" data-svc="Baño">🛁 Baño</div>
+        <div class="svc-chip" data-svc="Tratamiento de pelo">✨ Tratamiento</div>
+        <div class="svc-chip" data-svc="Spa canino">🌿 Spa canino</div>
+        <div class="svc-chip" data-svc="Pelado al ras">🔪 Pelado al ras</div>
+        <div class="svc-chip" data-svc="Teñido">🎨 Teñido</div>
+        <div class="svc-chip" data-svc="Perfume y moño">🎀 Perfume y moño</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-title">📅 Días y horarios</div>
+      <p style="font-size:12px;color:var(--gray);margin-bottom:14px">Tocá un día para elegir sus horarios (7:00 a 20:00).</p>
+      <div class="days-grid" id="daysGrid">
+        <div class="day-chip" data-d="Lunes" onclick="toggleSetupDay(this)">Lun</div>
+        <div class="day-chip" data-d="Martes" onclick="toggleSetupDay(this)">Mar</div>
+        <div class="day-chip" data-d="Miércoles" onclick="toggleSetupDay(this)">Mié</div>
+        <div class="day-chip" data-d="Jueves" onclick="toggleSetupDay(this)">Jue</div>
+        <div class="day-chip" data-d="Viernes" onclick="toggleSetupDay(this)">Vie</div>
+        <div class="day-chip" data-d="Sábado" onclick="toggleSetupDay(this)">Sáb</div>
+        <div class="day-chip" data-d="Domingo" onclick="toggleSetupDay(this)">Dom</div>
+      </div>
+      <div id="setupHoursPanel" style="display:none;margin-top:16px">
+        <div id="setupHoursDayLabel" style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"></div>
+        <div class="hours-row" id="setupHoursRow"></div>
+      </div>
+      <div id="scheduleSummary" style="margin-top:14px"></div>
+    </div>
+    <div style="padding:0 0 24px">
+      <button class="btn-save" onclick="saveSetup()">✅ Guardar y generar mi link</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING (CLIENTE) -->
+<div class="screen" id="bookingScreen">
+  <div class="header">
+    <div id="bookingLogoWrap" class="header-logo-placeholder">🐾</div>
+    <div class="header-info">
+      <div class="header-name" id="bookingName">Cargando...</div>
+      <div class="header-addr" id="bookingAddr"></div>
+    </div>
+  </div>
+  <div class="step-indicator">
+    <div class="step-dot active" id="sd1">1</div><div class="step-line" id="sl1"></div>
+    <div class="step-dot" id="sd2">2</div><div class="step-line" id="sl2"></div>
+    <div class="step-dot" id="sd3">3</div><div class="step-line" id="sl3"></div>
+    <div class="step-dot" id="sd4">4</div>
+  </div>
+  <div class="form-step active" id="step1">
+    <div style="padding:0 16px 12px">
+      <div class="step-title">👤 Tus datos</div>
+      <div class="aviso-box">⏰ <strong>Tiempo de espera:</strong> 15 min, luego el turno queda cancelado.<br>🐛 No deben tener pulgas, garrapatas ni enfermedades contagiosas.</div>
+      <div class="field"><label>Tu nombre</label><input id="bOwnerName" type="text" placeholder="María García"></div>
+      <div class="field"><label>WhatsApp</label><input id="bOwnerPhone" type="tel" placeholder="+5493416123456"></div>
+      <div class="field"><label>Email (opcional)</label><input id="bOwnerEmail" type="email" placeholder="maria@mail.com"></div>
+    </div>
+  </div>
+  <div class="form-step" id="step2">
+    <div style="padding:0 16px 12px">
+      <div class="step-title">🐕 Tu perro</div>
+      <div class="field"><label>Nombre del perro</label><input id="bDogName" type="text" placeholder="Firulais"></div>
+      <div class="field"><label>Raza</label><input id="bDogBreed" type="text" placeholder="Labrador, mestizo, etc."></div>
+      <div class="field"><label>Tamaño</label>
+        <select id="bDogSize">
+          <option value="">Seleccioná...</option>
+          <option>Pequeño (hasta 10kg)</option>
+          <option>Mediano (10-25kg)</option>
+          <option>Grande (más de 25kg)</option>
+        </select>
+      </div>
+      <div class="field"><label>Edad</label><input id="bDogAge" type="text" placeholder="2 años"></div>
+      <div class="field"><label>Observaciones</label><textarea id="bDogNotes" placeholder="Es nervioso, le molesta que le toquen las patas..."></textarea></div>
+    </div>
+  </div>
+  <div class="form-step" id="step3">
+    <div style="padding:0 16px 12px">
+      <div class="step-title">✂️ ¿Qué servicio necesitás?</div>
+      <div class="incluye-box">
+        <div class="incluye-title">✅ Todos incluyen</div>
+        <div class="incluye-items">
+          <span class="incluye-chip">✂️ Pelado higiénico</span>
+          <span class="incluye-chip">💅 Corte de uñas</span>
+          <span class="incluye-chip">👂 Limpieza de oídos</span>
+          <span class="incluye-chip">🐾 Despeje de almohadillas</span>
+        </div>
+      </div>
+      <div class="svc-list" id="svcList"></div>
+    </div>
+  </div>
+  <div class="form-step" id="step4">
+    <div style="padding:0 16px 12px">
+      <div class="step-title">📅 ¿Cuándo podés?</div>
+      <p style="font-size:13px;color:var(--gray);margin-bottom:14px">Elegí un día y luego el horario.</p>
+      <div id="bookingCalWrap" style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:14px"></div>
+      <div id="hoursForDay" style="display:none">
+        <div id="selectedDayLabel" style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px"></div>
+        <div id="availGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px"></div>
+      </div>
+      <div id="slotsSummary" style="display:none;background:var(--mint);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+        <div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Horario seleccionado</div>
+        <div id="slotsList" style="font-size:13px;color:var(--dark);font-weight:700"></div>
+      </div>
+      <div class="field"><label>Nota adicional (opcional)</label><textarea id="bExtraNotes" placeholder="Cualquier cosa que quieras aclarar..."></textarea></div>
+    </div>
+  </div>
+  <div class="step-btns">
+    <button class="btn-back-step" id="btnBack" onclick="prevStep()" style="display:none">← Volver</button>
+    <button class="btn-next" id="btnNext" onclick="nextStep()">Continuar →</button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="screen" id="success">
+  <div class="success-icon">🎉</div>
+  <h2 class="success-title">¡Solicitud enviada!</h2>
+  <p class="success-sub" style="margin-bottom:20px">Tu solicitud fue registrada.<br>Avisale al peluquero por WhatsApp 👇</p>
+  <a id="waSuccessBtn" href="#" target="_blank" style="display:block;background:#25D366;color:#fff;font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;padding:18px 36px;border-radius:50px;text-decoration:none;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,.3)">📱 Notificar al peluquero</a>
+  <button class="btn-new" onclick="resetBooking()">Hacer otra solicitud</button>
+</div>
+
+<!-- PANEL (PELUQUERO) -->
+<div class="screen" id="panelScreen">
+  <div class="header">
+    <div id="panelLogoWrap" class="header-logo-placeholder">🐾</div>
+    <div class="header-info">
+      <div class="header-name" id="panelName">Mi panel</div>
+      <div class="header-addr" id="panelAddr"></div>
+    </div>
+    <button class="header-btn" onclick="refreshPanel()">↻</button>
+  </div>
+  <div class="panel-tabs">
+    <div class="p-tab on" id="pt1" onclick="switchPTab('pending')">📋 Solicitudes</div>
+    <div class="p-tab" id="pt2" onclick="switchPTab('confirmed')">✅ Confirmados</div>
+    <div class="p-tab" id="pt3" onclick="switchPTab('agenda')">📅 Agenda</div>
+    <div class="p-tab" id="pt4" onclick="switchPTab('stats')">📊 Stats</div>
+  </div>
+  <div class="body-scroll">
+    <div id="pendingList"></div>
+    <div id="confirmedList" style="display:none"></div>
+    <div id="agendaView" style="display:none"></div>
+    <div id="statsView" style="display:none"></div>
+  </div>
+  <div class="bottom-nav">
+    <button class="nav-btn on" onclick="switchPTab('pending')"><span class="nav-icon">📋</span>Solicitudes</button>
+    <button class="nav-btn" onclick="openShare()"><span class="nav-icon">🔗</span>Mi link</button>
+    <button class="nav-btn" onclick="btnSoyPeluquero()"><span class="nav-icon">⚙️</span>Ajustes</button>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal" onclick="if(event.target===this)closeShare()">
+  <div class="modal-box">
+    <div class="modal-title">🔗 Tu link para compartir</div>
+    <div class="link-box" id="shareLink"></div>
+    <button class="btn-copy" onclick="copyLink()">📋 Copiar link</button>
+    <button class="btn-share-wa" onclick="shareWa()">📱 Compartir por WhatsApp</button>
+    <button class="btn-modal-close" onclick="closeShare()">Cerrar</button>
+  </div>
+</div>
+
+<!-- CONFIRM SLOT MODAL -->
+<div class="slot-modal" id="slotModal">
+  <div class="slot-modal-box">
+    <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--dark);margin-bottom:6px">📅 Confirmar turno</div>
+    <div style="font-size:13px;color:var(--gray);margin-bottom:16px">Elegí el horario:</div>
+    <div id="slotOptions"></div>
+    <button onclick="closeSlotModal()" style="background:#f5faf6;color:var(--gray);font-size:14px;font-weight:700;padding:12px;border-radius:50px;width:100%;border:2px solid #e0ede2;margin-top:8px">Cancelar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ CONFIG ══════════════════════════════════════════
+const SB_URL = 'https://oeqymptofytmzyleghtg.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9lcXltcHRvZnl0bXp5bGVnaHRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0MTcyOTQsImV4cCI6MjA4Nzk5MzI5NH0.-ms5-bHtXtub9OozB9iXM-vxYFAvlBkV11_CYFAlQtw';
+const BASE_URL = location.origin + location.pathname; // URL actual automatica
+const ALL_HOURS = ['7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+
+// ══ STATE ══════════════════════════════════════════
+let salon = {id:'',name:'',slogan:'',wa:'',addr:'',logo:'',services:[],schedule:{}};
+let requests = [];
+let currentStep = 1;
+let selectedSlot = null;
+let setupSchedule = {};
+let currentEditDay = null;
+let _calYear, _calMonth;
+let agendaYear, agendaMonth;
+
+// ══ SUPABASE ════════════════════════════════════════
+async function sbFetch(path, method, body) {
+  method = method || 'GET';
+  try {
+    var headers = {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json'
+    };
+    // Usar return=minimal para evitar problemas con POST
+    if (method === 'POST' || method === 'PATCH') {
+      headers['Prefer'] = 'return=minimal';
+    }
+    var opts = { method: method, headers: headers };
+    if (body) opts.body = JSON.stringify(body);
+    var r = await fetch(SB_URL + path, opts);
+    if (!r.ok) {
+      var txt = await r.text();
+      console.error('SB error', method, path, r.status, txt);
+      return null;
+    }
+    if (method === 'GET') return await r.json();
+    return true;
+  } catch(e) {
+    console.error('SB fetch error:', e);
+    return null;
+  }
+}
+
+// ══ INIT ════════════════════════════════════════════
+window.onload = function() {
+  loadSalonLocal();
+  var p = new URLSearchParams(location.search);
+  if (p.get('salon')) {
+    // MODO CLIENTE
+    showScreen('bookingScreen');
+    cargarSalonCliente(p.get('salon'));
+  }
+  // Sino, queda en splash
+};
+
+// ══ LOCAL STORAGE ════════════════════════════════════
+function saveSalonLocal() {
+  try { localStorage.setItem('pc_salon', JSON.stringify(salon)); } catch(e) {}
+}
+function loadSalonLocal() {
+  try {
+    var d = localStorage.getItem('pc_salon');
+    if (d) {
+      var s = JSON.parse(d);
+      salon = s;
+    }
+  } catch(e) {}
+  // Siempre garantizar tipos correctos
+  if (!salon) salon = {};
+  if (!Array.isArray(salon.services)) salon.services = [];
+  if (!salon.schedule || typeof salon.schedule !== 'object') salon.schedule = {};
+}
+function saveRequestsLocal() {
+  try { localStorage.setItem('pc_req', JSON.stringify(requests)); } catch(e) {}
+}
+function loadRequestsLocal() {
+  try {
+    var d = localStorage.getItem('pc_req');
+    if (d) requests = JSON.parse(d);
+  } catch(e) {}
+  if (!Array.isArray(requests)) requests = [];
+}
+
+// ══ SCREENS ════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+// ══ BOTONES SPLASH ════════════════════════════════
+function btnSoyPeluquero() {
+  salon.services = salon.services || [];
+  salon.schedule = salon.schedule || {};
+  loadSetupForm();
+  showScreen('setupScreen');
+}
+
+function btnYaTengoCuenta() {
+  loadSalonLocal();
+  if (!salon.id) {
+    toast('⚠️ No encontramos tu cuenta. Configurá tu peluquería.');
+    btnSoyPeluquero();
+    return;
+  }
+  applyPanelHeader();
+  showScreen('panelScreen');
+  loadRequestsLocal();
+  renderPanel();
+  // Cargar turnos frescos de Supabase sin bloquear
+  loadTurnosSupabase(salon.id).then(function(ok) {
+    if (ok) renderPanel();
+  }).catch(function() {});
+}
+
+// ══ SETUP ═══════════════════════════════════════════
+function loadSetupForm() {
+  document.getElementById('sName').value   = salon.name   || '';
+  document.getElementById('sSlogan').value = salon.slogan || '';
+  document.getElementById('sWa').value     = salon.wa     || '';
+  document.getElementById('sAddr').value   = salon.addr   || '';
+  if (salon.logo) {
+    var p = document.getElementById('logoPreview');
+    p.src = salon.logo; p.style.display = 'block';
+  }
+  // Chips de servicios — marcar SOLO los guardados
+  var svcs = Array.isArray(salon.services) ? salon.services : [];
+  document.querySelectorAll('#svcGrid .svc-chip').forEach(function(c) {
+    var activo = svcs.indexOf(c.dataset.svc) >= 0;
+    c.classList.toggle('on', activo);
+    c.onclick = function() { c.classList.toggle('on'); };
+  });
+  // Horarios
+  setupSchedule = {};
+  if (salon.schedule && typeof salon.schedule === 'object') {
+    setupSchedule = JSON.parse(JSON.stringify(salon.schedule));
+  }
+  document.querySelectorAll('#daysGrid .day-chip').forEach(function(c) {
+    var d = c.dataset.d;
+    var tiene = setupSchedule[d] && setupSchedule[d].length > 0;
+    c.classList.toggle('on', tiene);
+    c.classList.remove('editing');
+  });
+  document.getElementById('setupHoursPanel').style.display = 'none';
+  currentEditDay = null;
+  renderScheduleSummary();
+}
+
+function handleLogo(input) {
+  var file = input.files[0]; if (!file) return;
+  var r = new FileReader();
+  r.onload = function(e) {
+    var p = document.getElementById('logoPreview');
+    p.src = e.target.result; p.style.display = 'block';
+    salon.logo = e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function toggleSetupDay(el) {
+  var day = el.dataset.d;
+  if (currentEditDay === day) {
+    currentEditDay = null;
+    el.classList.remove('editing');
+    document.getElementById('setupHoursPanel').style.display = 'none';
+    return;
+  }
+  document.querySelectorAll('#daysGrid .day-chip').forEach(function(c) { c.classList.remove('editing'); });
+  currentEditDay = day;
+  el.classList.add('editing');
+  if (!setupSchedule[day]) setupSchedule[day] = ALL_HOURS.slice();
+  el.classList.add('on');
+  renderSetupHours(day);
+  document.getElementById('setupHoursPanel').style.display = 'block';
+}
+
+function renderSetupHours(day) {
+  var selected = setupSchedule[day] || [];
+  document.getElementById('setupHoursDayLabel').textContent = '⏰ Horarios para ' + day;
+  document.getElementById('setupHoursRow').innerHTML = ALL_HOURS.map(function(h) {
+    var on = selected.indexOf(h) >= 0 ? 'on' : '';
+    return '<div class="hour-chip ' + on + '" onclick="toggleHour(this,\'' + day + '\',\'' + h + '\')">' + h + '</div>';
+  }).join('');
+}
+
+function toggleHour(el, day, hour) {
+  el.classList.toggle('on');
+  if (!setupSchedule[day]) setupSchedule[day] = [];
+  if (el.classList.contains('on')) {
+    if (setupSchedule[day].indexOf(hour) < 0) setupSchedule[day].push(hour);
+  } else {
+    setupSchedule[day] = setupSchedule[day].filter(function(h) { return h !== hour; });
+    if (setupSchedule[day].length === 0) {
+      delete setupSchedule[day];
+      document.querySelectorAll('#daysGrid .day-chip').forEach(function(c) {
+        if (c.dataset.d === day) { c.classList.remove('on', 'editing'); }
+      });
+      document.getElementById('setupHoursPanel').style.display = 'none';
+      currentEditDay = null;
+    }
+  }
+  renderScheduleSummary();
+}
+
+function renderScheduleSummary() {
+  var el = document.getElementById('scheduleSummary');
+  if (!el) return;
+  var days = Object.keys(setupSchedule).filter(function(d) { return setupSchedule[d] && setupSchedule[d].length > 0; });
+  if (!days.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:4px">Resumen de horarios</div>'
+    + days.map(function(d) {
+      var hs = setupSchedule[d].slice().sort(function(a,b){ return parseInt(a)-parseInt(b); });
+      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid #f0f0f0"><strong>' + d + '</strong><span style="color:var(--green)">' + hs.join(' · ') + '</span></div>';
+    }).join('');
+}
+
+async function saveSetup() {
+  var name = document.getElementById('sName').value.trim();
+  var wa   = document.getElementById('sWa').value.trim();
+  if (!name) { toast('⚠️ Ingresá el nombre'); return; }
+  if (!wa)   { toast('⚠️ Ingresá tu WhatsApp'); return; }
+
+  if (!salon.id) salon.id = 'salon_' + Math.random().toString(36).substr(2, 8);
+  salon.name    = name;
+  salon.slogan  = document.getElementById('sSlogan').value.trim();
+  salon.wa      = wa;
+  salon.addr    = document.getElementById('sAddr').value.trim();
+
+  // Guardar exactamente los servicios marcados
+  salon.services = [];
+  document.querySelectorAll('#svcGrid .svc-chip.on').forEach(function(c) {
+    salon.services.push(c.dataset.svc);
+  });
+
+  // Guardar exactamente el schedule configurado
+  salon.schedule = JSON.parse(JSON.stringify(setupSchedule));
+
+  saveSalonLocal();
+  toast('⏳ Guardando...');
+
+  // Guardar en Supabase
+  var payload = {
+    id:       salon.id,
+    name:     salon.name,
+    slogan:   salon.slogan || '',
+    wa:       salon.wa,
+    addr:     salon.addr || '',
+    logo:     salon.logo || '',
+    services: JSON.stringify(salon.services),
+    schedule: JSON.stringify(salon.schedule),
+    days:     JSON.stringify(Object.keys(salon.schedule))
+  };
+
+  // Verificar si existe
+  var existing = await sbFetch('/rest/v1/salones?id=eq.' + salon.id + '&select=id');
+  if (existing && existing.length > 0) {
+    await sbFetch('/rest/v1/salones?id=eq.' + salon.id, 'PATCH', payload);
+  } else {
+    await sbFetch('/rest/v1/salones', 'POST', payload);
+  }
+
+  toast('✅ ¡Guardado!');
+  setTimeout(function() { btnYaTengoCuenta(); }, 800);
+}
+
+// ══ PANEL ═══════════════════════════════════════════
+function applyPanelHeader() {
+  document.getElementById('panelName').textContent = salon.name || 'Mi panel';
+  document.getElementById('panelAddr').textContent = salon.addr || '';
+  var wrap = document.getElementById('panelLogoWrap');
+  if (salon.logo) {
+    wrap.innerHTML = '<img src="' + salon.logo + '" class="header-logo">';
+  } else {
+    wrap.textContent = '🐾';
+    wrap.className = 'header-logo-placeholder';
+  }
+}
+
+async function refreshPanel() {
+  toast('⏳ Actualizando...');
+  var ok = await loadTurnosSupabase(salon.id);
+  if (ok) { renderPanel(); toast('✅ Actualizado'); }
+  else toast('⚠️ Sin conexión');
+}
+
+async function loadTurnosSupabase(salonId) {
+  var data = await sbFetch('/rest/v1/turnos?salon_id=eq.' + salonId + '&order=created_at.desc&select=*');
+  if (data && Array.isArray(data)) {
+    requests = data.map(function(r) {
+      return {
+        id: r.id, salon_id: r.salon_id,
+        owner_name: r.owner_name, owner_phone: r.owner_phone, owner_email: r.owner_email,
+        dog_name: r.dog_name, dog_breed: r.dog_breed, dog_age: r.dog_age,
+        dog_size: r.dog_size, dog_notes: r.dog_notes,
+        services: r.services, availability: r.availability, extra_note: r.extra_note,
+        status: r.status, confirmedSlot: r.confirmed_slot || '',
+        created_at: r.created_at
+      };
+    });
+    saveRequestsLocal();
+    return true;
+  }
+  return false;
+}
+
+function renderPanel() {
+  var pending   = requests.filter(function(r) { return r.status === 'pending'; });
+  var confirmed = requests.filter(function(r) { return r.status === 'confirmed'; });
+
+  document.getElementById('pt1').textContent = pending.length > 0
+    ? '📋 Solicitudes (' + pending.length + ')' : '📋 Solicitudes';
+
+  document.getElementById('pendingList').innerHTML = pending.length
+    ? pending.map(reqCard).join('')
+    : '<p style="text-align:center;padding:40px 20px;color:var(--gray);font-size:14px">No hay solicitudes pendientes 🐾</p>';
+
+  document.getElementById('confirmedList').innerHTML = confirmed.length
+    ? confirmed.map(reqCard).join('')
+    : '<p style="text-align:center;padding:40px 20px;color:var(--gray);font-size:14px">No hay turnos confirmados aún</p>';
+
+  renderStats();
+}
+
+function reqCard(r) {
+  var badge = r.status === 'confirmed'
+    ? '<span class="req-badge badge-confirmed">✅ Confirmado</span>'
+    : r.status === 'rejected'
+    ? '<span class="req-badge badge-rejected">❌ Rechazado</span>'
+    : '<span class="req-badge badge-pending">⏳ Pendiente</span>';
+
+  var actions = '';
+  if (r.status === 'pending') {
+    actions = '<div class="req-actions">'
+      + '<button class="btn-confirm" onclick="openConfirmModal(\'' + r.id + '\')">✅ Confirmar</button>'
+      + '<button class="btn-reject" onclick="rejectReq(\'' + r.id + '\')">✕ Rechazar</button>'
+      + '<button class="btn-wa" onclick="contactClient(\'' + r.id + '\')">📱</button>'
+      + '</div>';
+  } else if (r.status === 'confirmed') {
+    actions = '<div class="req-actions">'
+      + '<button class="btn-wa" onclick="contactClient(\'' + r.id + '\')">📱 WhatsApp</button>'
+      + '<button class="btn-reject" onclick="deleteReq(\'' + r.id + '\')" style="background:#fff0f0;color:#e53e3e;border:1.5px solid #e53e3e;padding:8px 14px;border-radius:50px;font-size:13px;font-weight:800;cursor:pointer">🗑 Borrar</button>'
+      + '</div>';
+  } else {
+    actions = '<div class="req-actions"><button class="btn-wa" onclick="contactClient(\'' + r.id + '\')">📱 WhatsApp</button></div>';
+  }
+
+  return '<div class="req-card ' + r.status + '">'
+    + '<div class="req-name">🐕 ' + (r.dog_name || 'Sin nombre') + ' <span style="font-size:13px;color:var(--gray);font-family:Nunito,sans-serif">(' + (r.dog_breed || '—') + ')</span></div>'
+    + '<div class="req-meta">'
+    + '👤 ' + (r.owner_name || '—') + ' · 📱 ' + (r.owner_phone || '—') + '<br>'
+    + '📏 ' + (r.dog_size || '—') + ' · 🎂 ' + (r.dog_age || '—') + '<br>'
+    + '✂️ ' + (r.services || '—') + '<br>'
+    + '📅 ' + (r.availability || '—')
+    + (r.dog_notes ? '<br>⚠️ ' + r.dog_notes : '')
+    + (r.confirmedSlot ? '<br><strong style="color:var(--green2)">✅ Turno confirmado: ' + r.confirmedSlot + '</strong>' : '')
+    + '</div>'
+    + badge + actions
+    + '</div>';
+}
+
+function openConfirmModal(id) {
+  var r = requests.find(function(x) { return x.id === id; });
+  if (!r) return;
+  var slots = (r.availability || '').split('|').map(function(s) { return s.trim(); }).filter(Boolean);
+  if (slots.length === 1) { doConfirm(id, slots[0]); return; }
+  var html = slots.map(function(s) {
+    return '<div class="slot-option" onclick="doConfirm(\'' + id + '\',\'' + s.replace(/'/g, "\\'") + '\');closeSlotModal()">📅 ' + s + '</div>';
+  }).join('');
+  document.getElementById('slotOptions').innerHTML = html;
+  document.getElementById('slotModal').classList.add('open');
+}
+function closeSlotModal() { document.getElementById('slotModal').classList.remove('open'); }
+
+async function doConfirm(id, slot) {
+  closeSlotModal();
+  var r = requests.find(function(x) { return x.id === id; });
+  if (!r) return;
+  r.status = 'confirmed';
+  r.confirmedSlot = slot;
+  saveRequestsLocal();
+  renderPanel();
+  renderAgenda();
+  toast('⏳ Confirmando...');
+  var ok = await sbFetch('/rest/v1/turnos?id=eq.' + id, 'PATCH', { status: 'confirmed', confirmed_slot: slot });
+  toast(ok ? '✅ Confirmado: ' + slot : '⚠️ Guardado local. Sin conexión.');
+}
+
+async function rejectReq(id) {
+  var r = requests.find(function(x) { return x.id === id; });
+  if (!r) return;
+  r.status = 'rejected';
+  saveRequestsLocal();
+  renderPanel();
+  await sbFetch('/rest/v1/turnos?id=eq.' + id, 'PATCH', { status: 'rejected', confirmed_slot: '' });
+  toast('Solicitud rechazada');
+}
+
+async function deleteReq(id) {
+  var r = requests.find(function(x) { return x.id === id; });
+  if (!r) return;
+  if (!confirm('¿Borrar el turno de ' + (r.dog_name || 'este perro') + '?')) return;
+  requests = requests.filter(function(x) { return x.id !== id; });
+  saveRequestsLocal();
+  renderPanel();
+  renderAgenda();
+  await sbFetch('/rest/v1/turnos?id=eq.' + id, 'DELETE');
+  toast('Turno eliminado');
+}
+
+function contactClient(id) {
+  var r = requests.find(function(x) { return x.id === id; });
+  if (!r) return;
+  var msg = encodeURIComponent('Hola ' + r.owner_name + '! 🐾 Te contacto de ' + salon.name + ' por la solicitud de turno para ' + r.dog_name + '.');
+  var clean = r.owner_phone.replace(/\D/g, '');
+  window.open('https://wa.me/' + clean + '?text=' + msg, '_blank');
+}
+
+function switchPTab(tab) {
+  var map = { pending: 'pendingList', confirmed: 'confirmedList', agenda: 'agendaView', stats: 'statsView' };
+  var tmap = { pending: 'pt1', confirmed: 'pt2', agenda: 'pt3', stats: 'pt4' };
+  Object.keys(map).forEach(function(k) {
+    document.getElementById(map[k]).style.display = k === tab ? 'block' : 'none';
+  });
+  ['pt1','pt2','pt3','pt4'].forEach(function(id) { document.getElementById(id).classList.remove('on'); });
+  document.getElementById(tmap[tab]).classList.add('on');
+  if (tab === 'agenda') renderAgenda();
+  if (tab === 'stats') renderStats();
+}
+
+// ══ AGENDA ══════════════════════════════════════════
+function renderAgenda() {
+  var view = document.getElementById('agendaView');
+  if (!view) return;
+  var now = new Date();
+  if (agendaYear === undefined) { agendaYear = now.getFullYear(); agendaMonth = now.getMonth(); }
+  var year = agendaYear, month = agendaMonth;
+  var MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var DN = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var startDow = new Date(year, month, 1).getDay();
+  var totalDays = new Date(year, month + 1, 0).getDate();
+
+  var byDay = {};
+  requests.filter(function(r) { return r.status === 'confirmed' && r.confirmedSlot; }).forEach(function(r) {
+    // Formato: "Miércoles 9/4/2026: 10:00"
+    var m = r.confirmedSlot.match(/\s+(\d+)\/(\d+)\/(\d+)[:\s]+(.+)$/);
+    if (m) {
+      var d = parseInt(m[1]), mo = parseInt(m[2]) - 1, y = parseInt(m[3]);
+      if (mo === month && y === year) {
+        if (!byDay[d]) byDay[d] = [];
+        byDay[d].push(r);
+      }
+    }
+  });
+
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:2px solid #f0f0f0">'
+    + '<button onclick="agendaMonth--;if(agendaMonth<0){agendaMonth=11;agendaYear--;}renderAgenda()" style="background:#f5f5f5;border:none;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer">‹</button>'
+    + '<div style="font-weight:800;font-size:16px">' + MN[month] + ' ' + year + '</div>'
+    + '<button onclick="agendaMonth++;if(agendaMonth>11){agendaMonth=0;agendaYear++;}renderAgenda()" style="background:#f5f5f5;border:none;border-radius:50%;width:38px;height:38px;font-size:22px;cursor:pointer">›</button>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:repeat(7,1fr);background:#f5f5f5;border-bottom:1px solid #eee">';
+  DN.forEach(function(d) { html += '<div style="text-align:center;font-size:11px;font-weight:800;color:#6b7280;padding:6px 0">' + d + '</div>'; });
+  html += '</div><div id="agendaDayDetail" style="display:none;padding:14px 16px;background:#fff;border-bottom:1px solid #f0f0f0"></div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#e0e0e0">';
+  for (var i = 0; i < startDow; i++) html += '<div style="background:#fafafa;min-height:40px"></div>';
+  for (var d = 1; d <= totalDays; d++) {
+    var apts = byDay[d] || [];
+    html += '<div onclick="showAgendaDay(' + d + ',' + month + ',' + year + ')" style="background:#fff;min-height:40px;padding:4px 2px;cursor:pointer;text-align:center">'
+      + '<div style="font-size:12px;font-weight:600;color:#1b2e22;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 2px">' + d + '</div>'
+      + (apts.length > 0 ? '<div style="background:var(--green);color:#fff;border-radius:6px;font-size:10px;font-weight:800;padding:1px 3px">' + apts.length + ' turno' + (apts.length > 1 ? 's' : '') + '</div>' : '')
+      + '</div>';
+  }
+  html += '</div>';
+  view.innerHTML = html;
+}
+
+function showAgendaDay(dayNum, month, year) {
+  var MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var WF = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var dow = new Date(year, month, dayNum).getDay();
+  var apts = requests.filter(function(r) {
+    if (r.status !== 'confirmed' || !r.confirmedSlot) return false;
+    var m = r.confirmedSlot.match(/\s+(\d+)\/(\d+)\/(\d+)/);
+    return m && parseInt(m[1]) === dayNum && parseInt(m[2]) - 1 === month && parseInt(m[3]) === year;
+  }).map(function(r) {
+    var m = r.confirmedSlot.match(/:\s*(.+)$/);
+    return Object.assign({}, r, { time: m ? m[1].trim() : '' });
+  }).sort(function(a, b) {
+    return (parseInt(a.time) || 0) - (parseInt(b.time) || 0);
+  });
+
+  var detail = document.getElementById('agendaDayDetail');
+  if (!detail) return;
+  detail.style.display = 'block';
+  if (!apts.length) {
+    detail.innerHTML = '<div style="text-align:center;color:#6b7280;font-size:14px;padding:10px">Sin turnos para ' + WF[dow] + ' ' + dayNum + '</div>';
+    return;
+  }
+  var html = '<div style="font-size:14px;font-weight:800;color:#1a1a2e;margin-bottom:10px">' + WF[dow] + ' ' + dayNum + ' de ' + MN[month] + '</div>';
+  apts.forEach(function(r) {
+    html += '<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5">'
+      + '<div style="background:var(--green);color:#fff;border-radius:8px;padding:4px 8px;font-size:13px;font-weight:900;min-width:50px;text-align:center;flex-shrink:0">' + r.time + '</div>'
+      + '<div>'
+      + '<div style="font-size:14px;font-weight:800">' + (r.dog_name || '--') + ' <span style="font-weight:500;color:#6b7280">(' + (r.dog_breed || '--') + ')</span></div>'
+      + '<div style="font-size:12px;color:#6b7280">' + (r.owner_name || '--') + ' · ' + (r.owner_phone || '--') + '</div>'
+      + '<div style="font-size:12px;color:var(--green);font-weight:700">' + (r.services || '--') + '</div>'
+      + '</div></div>';
+  });
+  detail.innerHTML = html;
+}
+
+function renderStats() {
+  var el = document.getElementById('statsView');
+  if (!el) return;
+  var total = requests.length;
+  var conf  = requests.filter(function(r) { return r.status === 'confirmed'; }).length;
+  var pend  = requests.filter(function(r) { return r.status === 'pending'; }).length;
+  el.innerHTML = '<div style="padding:16px">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
+    + '<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:32px;font-weight:900;color:var(--green)">' + total + '</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Total</div></div>'
+    + '<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:32px;font-weight:900;color:#16a34a">' + conf + '</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Confirmados</div></div>'
+    + '<div style="background:#fff;border-radius:12px;padding:14px;text-align:center;box-shadow:var(--shadow)"><div style="font-size:32px;font-weight:900;color:var(--accent)">' + pend + '</div><div style="font-size:11px;color:#6b7280;margin-top:4px">Pendientes</div></div>'
+    + '</div></div>';
+}
+
+// ══ SHARE ═══════════════════════════════════════════
+function openShare() {
+  var waClean = salon.wa.replace(/\D/g, '');
+  var url = BASE_URL + '?salon=' + salon.id + '&wa=' + waClean + '&name=' + encodeURIComponent(salon.name || '');
+  document.getElementById('shareLink').textContent = url;
+  document.getElementById('shareModal').classList.add('open');
+}
+function closeShare() { document.getElementById('shareModal').classList.remove('open'); }
+function copyLink() {
+  var url = document.getElementById('shareLink').textContent;
+  navigator.clipboard.writeText(url).then(function() { toast('✅ ¡Link copiado!'); }).catch(function() { toast('Copiá el link manualmente'); });
+}
+function shareWa() {
+  var url = document.getElementById('shareLink').textContent;
+  var msg = encodeURIComponent('📍 Pedí tu turno en ' + salon.name + ': ' + url);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+// ══ BOOKING (CLIENTE) ════════════════════════════════
+async function cargarSalonCliente(id) {
+  var data = await sbFetch('/rest/v1/salones?id=eq.' + id + '&select=*');
+  if (data && data[0]) {
+    var s = data[0];
+    salon.id       = s.id;
+    salon.name     = s.name || 'PeluCan';
+    salon.slogan   = s.slogan || '';
+    salon.wa       = s.wa || '';
+    salon.addr     = s.addr || '';
+    salon.logo     = s.logo || '';
+    // CLAVE: parsear servicios y horarios desde el servidor
+    try { salon.services = typeof s.services === 'string' ? JSON.parse(s.services) : (s.services || []); } catch(e) { salon.services = []; }
+    try { salon.schedule = typeof s.schedule === 'string' ? JSON.parse(s.schedule) : (s.schedule || {}); } catch(e) { salon.schedule = {}; }
+  } else {
+    // Fallback a params URL
+    var p = new URLSearchParams(location.search);
+    salon.id   = id;
+    salon.wa   = p.get('wa') || '';
+    salon.name = decodeURIComponent(p.get('name') || 'PeluCan');
+    salon.services = [];
+    salon.schedule = {};
+  }
+  // Actualizar header
+  document.getElementById('bookingName').textContent = salon.name;
+  document.getElementById('bookingAddr').textContent = salon.addr || '';
+  if (salon.logo) {
+    var wrap = document.getElementById('bookingLogoWrap');
+    wrap.outerHTML = '<img src="' + salon.logo + '" class="header-logo" id="bookingLogoWrap">';
+  }
+}
+
+// SERVICIOS: solo los del peluquero
+function renderBookingServices() {
+  var svcs = Array.isArray(salon.services) ? salon.services : [];
+  if (!svcs.length) {
+    document.getElementById('svcList').innerHTML = '<p style="color:var(--gray);text-align:center;padding:20px;font-size:13px">El peluquero no configuró servicios aún.</p>';
+    return;
+  }
+  document.getElementById('svcList').innerHTML = svcs.map(function(s) {
+    return '<div class="svc-item" onclick="this.classList.toggle(\'on\')">'
+      + '<span class="svc-item-name">' + s + '</span>'
+      + '<div class="svc-check">✓</div>'
+      + '</div>';
+  }).join('');
+}
+
+// CALENDARIO: solo días con horarios configurados
+
+function renderBookingCal() {
+  var wrap = document.getElementById('bookingCalWrap');
+  if (!wrap) return;
+  var y = _calYear, m = _calMonth;
+  var MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var DN = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
+  var D2N = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  var fd = new Date(y, m, 1).getDay();
+  var tot = new Date(y, m + 1, 0).getDate();
+  var hoy = new Date(); hoy.setHours(0,0,0,0);
+
+  function norm(x) {
+    return (x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+  function dayHasHours(dayName) {
+    if (!salon.schedule) return false;
+    var keys = Object.keys(salon.schedule);
+    for (var i = 0; i < keys.length; i++) {
+      if (norm(keys[i]) === norm(dayName) && salon.schedule[keys[i]] && salon.schedule[keys[i]].length > 0) return true;
+    }
+    return false;
+  }
+
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f0f0f0">'
+    + '<button onclick="_calMonth--;if(_calMonth<0){_calMonth=11;_calYear--;}renderBookingCal()" style="background:#f5f5f5;border:none;border-radius:50%;width:34px;height:34px;font-size:20px;font-weight:900;cursor:pointer">‹</button>'
+    + '<div style="font-weight:800;font-size:15px">' + MN[m] + ' ' + y + '</div>'
+    + '<button onclick="_calMonth++;if(_calMonth>11){_calMonth=0;_calYear++;}renderBookingCal()" style="background:#f5f5f5;border:none;border-radius:50%;width:34px;height:34px;font-size:20px;font-weight:900;cursor:pointer">›</button>'
+    + '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid #f0f0f0">';
+  DN.forEach(function(x) { html += '<div style="text-align:center;font-size:11px;font-weight:800;color:#6b7280;padding:6px 0">' + x + '</div>'; });
+  html += '</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#e0e0e0">';
+  for (var i = 0; i < fd; i++) html += '<div style="background:#fafafa;min-height:44px"></div>';
+  for (var d = 1; d <= tot; d++) {
+    var dow = (fd + d - 1) % 7;
+    var dn = D2N[dow];
+    var dt = new Date(y, m, d); dt.setHours(0,0,0,0);
+    var avail = dayHasHours(dn) && dt >= hoy;
+    if (avail) {
+      html += '<div class="cal-day-btn" data-y="' + y + '" data-m="' + m + '" data-d="' + d + '" data-dn="' + encodeURIComponent(dn) + '" style="background:#fff;min-height:44px;padding:6px 2px;cursor:pointer;text-align:center">'
+        + '<div style="font-size:13px;font-weight:700;color:#1a1a2e">' + d + '</div>'
+        + '<div style="width:5px;height:5px;border-radius:50%;background:var(--green);margin:2px auto 0"></div>'
+        + '</div>';
+    } else {
+      html += '<div style="background:#fafafa;min-height:44px;padding:6px 2px;text-align:center">'
+        + '<div style="font-size:13px;font-weight:600;color:#ccc">' + d + '</div></div>';
+    }
+  }
+  html += '</div>';
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('.cal-day-btn').forEach(function(el) {
+    el.addEventListener('click', function() {
+      bookingPickDate(parseInt(this.dataset.y), parseInt(this.dataset.m), parseInt(this.dataset.d), decodeURIComponent(this.dataset.dn));
+    });
+  });
+}
+
+// HORARIOS: solo los configurados para ese día
+function bookingPickDate(y, m, d, dn) {
+  var MN = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  function norm(x) { return (x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+
+  var hours = [];
+  if (salon.schedule) {
+    var keys = Object.keys(salon.schedule);
+    for (var i = 0; i < keys.length; i++) {
+      if (norm(keys[i]) === norm(dn)) {
+        hours = salon.schedule[keys[i]].slice();
+        break;
+      }
+    }
+  }
+
+  if (!hours.length) {
+    toast('⚠️ No hay horarios para este día');
+    return;
+  }
+
+  hours.sort(function(a, b) { return parseInt(a) - parseInt(b); });
+
+  // Horarios ya bloqueados (turnos confirmados ese día y hora)
+  var blocked = [];
+  requests.filter(function(r) { return r.status === 'confirmed' && r.confirmedSlot; }).forEach(function(r) {
+    var mx = r.confirmedSlot.match(/\s+(\d+)\/(\d+)\/(\d+)[:\s]+(.+)$/);
+    if (mx && parseInt(mx[1]) === d && parseInt(mx[2]) - 1 === m && parseInt(mx[3]) === y) {
+      blocked.push(mx[4].trim());
+    }
+  });
+
+  selectedSlot = null;
+  var dateKey = dn + ' ' + d + '/' + (m + 1) + '/' + y;
+  document.getElementById('selectedDayLabel').textContent = dn + ' ' + d + ' de ' + MN[m];
+  document.getElementById('hoursForDay').style.display = 'block';
+  document.getElementById('availGrid').innerHTML = hours.map(function(h) {
+    var isBlocked = blocked.indexOf(h) >= 0;
+    return '<div class="avail-slot' + (isBlocked ? ' blocked' : '') + '" data-datekey="' + dateKey + '" data-hour="' + h + '" ' + (isBlocked ? '' : 'onclick="pickSlot(this)"') + '>'
+      + '<div class="time">' + (isBlocked ? '❌' : h) + '</div></div>';
+  }).join('');
+  document.getElementById('slotsSummary').style.display = 'none';
+  setTimeout(function() {
+    var e = document.getElementById('hoursForDay');
+    if (e) e.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 150);
+}
+
+function pickSlot(el) {
+  document.querySelectorAll('.avail-slot.on').forEach(function(x) { x.classList.remove('on'); });
+  el.classList.add('on');
+  selectedSlot = { dateKey: el.dataset.datekey, hour: el.dataset.hour };
+  document.getElementById('slotsSummary').style.display = 'block';
+  document.getElementById('slotsList').textContent = selectedSlot.dateKey + ': ' + selectedSlot.hour;
+}
+
+function renderAvailSlots() {
+  selectedSlot = null;
+  var now = new Date();
+  _calYear = now.getFullYear(); _calMonth = now.getMonth();
+  renderBookingCal();
+  document.getElementById('hoursForDay').style.display = 'none';
+  document.getElementById('slotsSummary').style.display = 'none';
+}
+
+// STEPS
+function nextStep() {
+  if (!validateStep()) return;
+  if (currentStep === 4) { submitBooking(); return; }
+  currentStep++;
+  updateSteps();
+  if (currentStep === 3) renderBookingServices();
+  if (currentStep === 4) renderAvailSlots();
+}
+function prevStep() {
+  if (currentStep > 1) { currentStep--; updateSteps(); }
+}
+function updateSteps() {
+  for (var i = 1; i <= 4; i++) {
+    document.getElementById('step' + i).classList.toggle('active', i === currentStep);
+    var dot = document.getElementById('sd' + i);
+    dot.classList.toggle('active', i === currentStep);
+    dot.classList.toggle('done', i < currentStep);
+    if (i < 4) document.getElementById('sl' + i).classList.toggle('done', i < currentStep);
+  }
+  document.getElementById('btnBack').style.display = currentStep > 1 ? 'block' : 'none';
+  document.getElementById('btnNext').textContent = currentStep === 4 ? 'Enviar solicitud 🐾' : 'Continuar →';
+}
+function validateStep() {
+  if (currentStep === 1) {
+    if (!document.getElementById('bOwnerName').value.trim()) { toast('⚠️ Ingresá tu nombre'); return false; }
+    if (!document.getElementById('bOwnerPhone').value.trim()) { toast('⚠️ Ingresá tu WhatsApp'); return false; }
+  }
+  if (currentStep === 2) {
+    if (!document.getElementById('bDogName').value.trim()) { toast('⚠️ Ingresá el nombre del perro'); return false; }
+    if (!document.getElementById('bDogSize').value) { toast('⚠️ Seleccioná el tamaño'); return false; }
+  }
+  if (currentStep === 3) {
+    if (!document.querySelector('#svcList .svc-item.on')) { toast('⚠️ Seleccioná un servicio'); return false; }
+  }
+  if (currentStep === 4) {
+    if (!selectedSlot) { toast('⚠️ Seleccioná un horario'); return false; }
+  }
+  return true;
+}
+
+async function submitBooking() {
+  var svcs = [];
+  document.querySelectorAll('#svcList .svc-item.on').forEach(function(i) {
+    svcs.push(i.querySelector('.svc-item-name').textContent);
+  });
+  var avail = selectedSlot.dateKey + ': ' + selectedSlot.hour;
+  var req = {
+    id:          'req_' + Math.random().toString(36).substr(2, 8),
+    salon_id:    salon.id,
+    owner_name:  document.getElementById('bOwnerName').value.trim(),
+    owner_phone: document.getElementById('bOwnerPhone').value.trim(),
+    owner_email: document.getElementById('bOwnerEmail').value.trim(),
+    dog_name:    document.getElementById('bDogName').value.trim(),
+    dog_breed:   document.getElementById('bDogBreed').value.trim(),
+    dog_age:     document.getElementById('bDogAge').value.trim(),
+    dog_size:    document.getElementById('bDogSize').value,
+    dog_notes:   document.getElementById('bDogNotes').value.trim(),
+    services:    svcs.join(', '),
+    availability:avail,
+    extra_note:  document.getElementById('bExtraNotes').value.trim(),
+    status:      'pending',
+    confirmed_slot: ''
+  };
+
+  showScreen('success');
+
+  // Guardar en Supabase
+  await sbFetch('/rest/v1/turnos', 'POST', req);
+
+  // Botón WhatsApp para notificar al peluquero
+  if (salon.wa) {
+    var clean = salon.wa.replace(/\D/g, '');
+    var msg = encodeURIComponent(
+      '🐾 *Nueva solicitud de turno!*\n\n'
+      + '👤 *Cliente:* ' + req.owner_name + '\n'
+      + '📱 *WhatsApp:* ' + req.owner_phone + '\n'
+      + '🐕 *Perro:* ' + req.dog_name + ' (' + (req.dog_breed || 'sin raza') + ')\n'
+      + '📏 *Tamaño:* ' + (req.dog_size || '—') + '\n'
+      + '✂️ *Servicio:* ' + req.services + '\n'
+      + '📅 *Horario solicitado:* ' + req.availability + '\n'
+      + (req.dog_notes ? '⚠️ *Obs:* ' + req.dog_notes + '\n' : '')
+      + (req.extra_note ? '💬 *Nota:* ' + req.extra_note + '\n' : '')
+      + '\n_Enviado desde PeluCan_'
+    );
+    document.getElementById('waSuccessBtn').href = 'https://wa.me/' + clean + '?text=' + msg;
+  }
+}
+
+function resetBooking() {
+  currentStep = 1; updateSteps(); selectedSlot = null;
+  ['bOwnerName','bOwnerPhone','bOwnerEmail','bDogName','bDogBreed','bDogAge','bDogNotes','bExtraNotes'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('bDogSize').value = '';
+  showScreen('bookingScreen');
+}
+</script>
+</body>
+</html>
